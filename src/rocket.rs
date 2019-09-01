@@ -5,6 +5,7 @@ use std::ops::Add;
 use sdl2::render::{Canvas, Texture, TextureCreator};
 use sdl2::rect::{Rect, Point};
 use sdl2::video::Window;
+use sdl2::video::WindowContext;
 use sdl2::pixels::Color;
 
 const HEIGHT: u32 = 50;
@@ -12,6 +13,7 @@ const WIDTH: u32 = 10;
 
 pub struct Rocket {
     texture : Texture<'static>,
+    texture_creator : TextureCreator<WindowContext>,
     position : Vector2D<f64>,
     velocity : Vector2D<f64>,
     acceleration : Vector2D<f64>
@@ -28,6 +30,7 @@ impl Rocket {
 
         Rocket {
             texture,
+            texture_creator,
             position : Vector2D::new(x as f64, y as f64),
             velocity : Vector2D::new(0.0, 0.0),
             acceleration : Vector2D::new(0.0, 0.0)
@@ -48,7 +51,7 @@ impl Rocket {
         self.acceleration = Vector2D::new(0.0, 0.0);
     }
 
-    pub fn show(&self, canvas: &mut Canvas<sdl2::video::Window>) {
+    pub fn show(&mut self, canvas: &mut Canvas<sdl2::video::Window>) {
         let _ = canvas.with_texture_canvas(&mut self.texture, |texture_canvas| {
             texture_canvas.set_draw_color(Color::RGBA(255, 0, 0, 255));
             texture_canvas.clear();
