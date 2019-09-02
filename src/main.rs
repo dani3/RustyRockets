@@ -31,6 +31,9 @@ fn main() {
 
     canvas.clear();
 
+    let mut rocket =
+        Rocket::new(&mut canvas, Point::new(SCREEN_WIDTH as i32 / 2, SCREEN_HEIGHT as i32));
+
     'running: loop {
         for event in event_pump.poll_iter() {
             match event {
@@ -44,9 +47,6 @@ fn main() {
 
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();
-
-        let mut rocket =
-            Rocket::new(&mut canvas, Point::new(SCREEN_WIDTH as i32 / 2, SCREEN_HEIGHT as i32));
 
         rocket.update();
         rocket.show(&mut canvas);

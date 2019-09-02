@@ -1,8 +1,6 @@
 use vector2d::Vector2D;
 
-use std::ops::Add;
-
-use sdl2::render::{Canvas, Texture, TextureCreator};
+use sdl2::render::{Canvas, TextureCreator};
 use sdl2::rect::{Rect, Point};
 use sdl2::video::Window;
 use sdl2::video::WindowContext;
@@ -22,26 +20,26 @@ impl Rocket {
     pub fn new(canvas: &Canvas<Window>, origin: Point) -> Self {
         let texture_creator: TextureCreator<_> = canvas.texture_creator();
 
-        let x = origin.x - HEIGHT as i32;
-        let y = origin.y - WIDTH as i32 / 2;
+        let x = origin.x - WIDTH as i32 / 2;
+        let y = origin.y - HEIGHT as i32;
 
         Rocket {
             texture_creator,
             position : Vector2D::new(x as f64, y as f64),
-            velocity : Vector2D::new(0.0, 0.0),
+            velocity : Vector2D::new(0.0, -1.0),
             acceleration : Vector2D::new(0.0, 0.0)
         }
     }
 
     pub fn apply_force(&mut self, force: Vector2D<f64>) {
-        self.acceleration = self.acceleration.add(force);
+        self.acceleration += force;
     }
 
     pub fn update(&mut self) {
         // Update the velocity based on the acceleration
-        self.velocity = self.velocity.add(self.acceleration);
+        self.velocity += self.acceleration;
         // Update the position based on the velocity
-        self.position = self.position.add(self.velocity);
+        self.position += self.velocity;
 
         // Clear the acceleration
         self.acceleration = Vector2D::new(0.0, 0.0);
@@ -49,7 +47,7 @@ impl Rocket {
 
     pub fn show(&mut self, canvas: &mut Canvas<sdl2::video::Window>) {
         let mut texture = self.texture_creator.create_texture_target(None, WIDTH, HEIGHT)
-                                                       .expect("Failed to create a texture");
+                                              .expect("Failed to create a texture");
 
         let _ = canvas.with_texture_canvas(&mut texture, |texture_canvas| {
             texture_canvas.set_draw_color(Color::RGBA(255, 0, 0, 255));
@@ -57,6 +55,12 @@ impl Rocket {
         });
 
         let _ = canvas.copy_ex(
-            &texture, None, Rect::new(100, 100, 50, 150), 0.0, Point::new(25, 150), false, false);
+              &texture
+            , None
+            , Rect::new(self.position.x as i32, self.position.y as i32, WIDTH, HEIGHT)
+            , 0.0
+            , Point::new(WIDTH as i32 / 2, HEIGHT as i32)
+            , false
+            , false);
     }
 }
