@@ -1,13 +1,15 @@
 use vector2d::Vector2D;
 
+use rand::Rng;
+
 use sdl2::render::{Canvas, TextureCreator};
 use sdl2::rect::{Rect, Point};
 use sdl2::video::Window;
 use sdl2::video::WindowContext;
 use sdl2::pixels::Color;
 
-const HEIGHT: u32 = 50;
-const WIDTH: u32 = 10;
+const HEIGHT: u32 = 25;
+const WIDTH: u32 = 5;
 
 pub struct Rocket {
     texture_creator : TextureCreator<WindowContext>,
@@ -23,10 +25,15 @@ impl Rocket {
         let x = origin.x - WIDTH as i32 / 2;
         let y = origin.y - HEIGHT as i32;
 
+        let mut rng = rand::thread_rng();
+
+        let vx = rng.gen_range(-(WIDTH as i32), WIDTH as i32);
+        let vy = rng.gen_range(-(HEIGHT as i32), 0);
+
         Rocket {
             texture_creator,
             position : Vector2D::new(x as f64, y as f64),
-            velocity : Vector2D::new(0.0, -1.0),
+            velocity : Vector2D::new(vx as f64, vy as f64),
             acceleration : Vector2D::new(0.0, 0.0)
         }
     }

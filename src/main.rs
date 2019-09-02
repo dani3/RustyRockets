@@ -1,12 +1,12 @@
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
-use sdl2::rect::Rect;
 use sdl2::rect::Point;
 
 mod rocket;
+mod population;
 
-use rocket::Rocket;
+use population::Population;
 
 const SCREEN_WIDTH: isize  = 1200;
 const SCREEN_HEIGHT: isize = 800;
@@ -31,8 +31,8 @@ fn main() {
 
     canvas.clear();
 
-    let mut rocket =
-        Rocket::new(&mut canvas, Point::new(SCREEN_WIDTH as i32 / 2, SCREEN_HEIGHT as i32));
+    let mut population =
+        Population::new(&canvas, Point::new(SCREEN_WIDTH as i32 / 2, SCREEN_HEIGHT as i32));
 
     'running: loop {
         for event in event_pump.poll_iter() {
@@ -48,8 +48,7 @@ fn main() {
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();
 
-        rocket.update();
-        rocket.show(&mut canvas);
+        population.run(&mut canvas);
 
         canvas.present();
     }
