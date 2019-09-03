@@ -8,6 +8,7 @@ use sdl2::rect::Point;
 mod rocket;
 mod population;
 mod dna;
+mod constants;
 
 use population::Population;
 

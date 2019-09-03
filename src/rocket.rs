@@ -9,11 +9,10 @@ use sdl2::video::WindowContext;
 use sdl2::pixels::Color;
 
 use crate::dna::DNA;
+use crate::constants::LIFESPAN;
 
 const HEIGHT: u32 = 25;
 const WIDTH: u32 = 5;
-
-const LIFESPAN: isize = 400;
 
 pub struct Rocket {
     texture_creator : TextureCreator<WindowContext>,
