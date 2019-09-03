@@ -2,6 +2,8 @@ use vector2d::Vector2D;
 
 use rand::Rng;
 
+use std::f64::consts::PI;
+
 use sdl2::render::{Canvas, TextureCreator};
 use sdl2::rect::{Rect, Point};
 use sdl2::video::Window;
@@ -10,6 +12,10 @@ use sdl2::pixels::Color;
 
 const HEIGHT: u32 = 25;
 const WIDTH: u32 = 5;
+
+fn map_range(from_range: (f64, f64), to_range: (f64, f64), s: f64) -> f64 {
+    to_range.0 + (s - from_range.0) * (to_range.1 - to_range.0) / (from_range.1 - from_range.0)
+}
 
 pub struct Rocket {
     texture_creator : TextureCreator<WindowContext>,
@@ -27,8 +33,11 @@ impl Rocket {
 
         let mut rng = rand::thread_rng();
 
-        let vx = rng.gen_range(-(WIDTH as i32), WIDTH as i32);
-        let vy = rng.gen_range(-(HEIGHT as i32), 0);
+        let vx = map_range((-5000.0, 5000.0), (-5.0, 5.0), rng.gen_range(-5000, 5000) as f64);
+        let vy = map_range((-5000.0, 0.0), (-5.0, 0.0), rng.gen_range(-5000, 0) as f64);
+
+        println!("{:?}", Vector2D::new(vx as f64, vy as f64).angle() * 180.0/PI);
+        println!("{:?}", Vector2D::new(vx as f64, vy as f64));
 
         Rocket {
             texture_creator,
@@ -65,7 +74,7 @@ impl Rocket {
               &texture
             , None
             , Rect::new(self.position.x as i32, self.position.y as i32, WIDTH, HEIGHT)
-            , 0.0
+            , 90.0 + self.velocity.angle() * 180.0 / PI
             , Point::new(WIDTH as i32 / 2, HEIGHT as i32)
             , false
             , false);
