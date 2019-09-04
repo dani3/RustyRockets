@@ -8,7 +8,7 @@ use sdl2::render::Canvas;
 use sdl2::rect::Point;
 use sdl2::video::Window;
 
-const POPULATION_SIZE : usize = 20;
+const POPULATION_SIZE : usize = 5;
 
 const POPULATION_ORIGIN_X: i32 = SCREEN_WIDTH as i32 / 2;
 const POPULATION_ORIGIN_Y: i32 = SCREEN_HEIGHT as i32;
@@ -48,6 +48,8 @@ impl Population {
         let mut max_fitness = 0.0;
         self.mating_pool = Vec::new();
 
+        println!("\nNew population starting:");
+
         for i in 0 .. POPULATION_SIZE {
             self.rockets[i].calculate_fitness(target);
             if self.rockets[i].fitness > max_fitness {
@@ -55,8 +57,12 @@ impl Population {
             }
         }
 
+        println!(" - Maximum fitness of the previous generation: {:?}", max_fitness);
+
         for i in 0 .. POPULATION_SIZE {
             self.rockets[i].fitness /= max_fitness;
+
+            println!(" - Fitness of rocket {:?} = {:?}", i, self.rockets[i].fitness);
         }
 
         for i in 0 .. POPULATION_SIZE {
@@ -65,12 +71,12 @@ impl Population {
                 self.mating_pool.push(i);
             }
         }
+
+        println!("{:?}", self.mating_pool);
     }
 
     pub fn natural_selection(&mut self, canvas: &Canvas<Window>) {
-        let mut new_rockets : Vec<Rocket> = Vec::new();
-
-        for _ in 0 .. POPULATION_SIZE {
+        for i in 0 .. POPULATION_SIZE {
             let a = self.mating_pool.choose(&mut rand::thread_rng()).unwrap();
             let b = self.mating_pool.choose(&mut rand::thread_rng()).unwrap();
 
@@ -79,13 +85,10 @@ impl Population {
 
             let child = parent_a.crossover(parent_b);
 
-            new_rockets.push(
-                Rocket::new(
-                      &canvas
-                    , Point::new(POPULATION_ORIGIN_X, POPULATION_ORIGIN_Y)
-                    , Some(child)));
+            self.rockets[i] = Rocket::new(
+                    &canvas
+                , Point::new(POPULATION_ORIGIN_X, POPULATION_ORIGIN_Y)
+                , Some(child));
         }
-
-        self.rockets = new_rockets;
     }
 }

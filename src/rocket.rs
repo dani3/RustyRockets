@@ -102,6 +102,8 @@ impl Rocket {
         let ux = target.get_position().x as f64;
         let uy = target.get_position().y as f64;
 
+        println!("   - Distance between ({:?},{:?}) and ({:?},{:?})", vx as isize, vy as isize, ux as isize, uy as isize);
+
         ((ux - vx).powi(2) + (uy - vy).powi(2)).sqrt()
     }
 
@@ -109,6 +111,12 @@ impl Rocket {
     pub fn calculate_fitness(&mut self, target : &Target) {
         let dist = self.calulate_distance_to_target(target);
 
-        self.fitness = map_range((0.0, SCREEN_WIDTH as f64),(SCREEN_WIDTH as f64, 0.0), dist);
+        if dist > SCREEN_WIDTH as f64 {
+            self.fitness = 10.0;
+        } else {
+            self.fitness = map_range((0.0, SCREEN_WIDTH as f64),(SCREEN_WIDTH as f64, 0.0), dist);
+        }
+
+        println!(" - Distance: {:?} -> Fitness: {:?}", dist as isize, self.fitness as isize);
     }
 }
