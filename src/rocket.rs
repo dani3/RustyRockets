@@ -4,8 +4,7 @@ use std::f64::consts::PI;
 
 use sdl2::render::{Canvas, TextureCreator};
 use sdl2::rect::{Rect, Point};
-use sdl2::video::Window;
-use sdl2::video::WindowContext;
+use sdl2::video::{WindowContext, Window};
 use sdl2::pixels::Color;
 
 use crate::dna::DNA;
@@ -62,7 +61,7 @@ impl Rocket {
                                               .expect("Failed to create a texture");
 
         let _ = canvas.with_texture_canvas(&mut texture, |texture_canvas| {
-            texture_canvas.set_draw_color(Color::RGBA(255, 0, 0, 255));
+            texture_canvas.set_draw_color(Color::RGBA(200, 200, 200, 255));
             texture_canvas.clear();
         });
 

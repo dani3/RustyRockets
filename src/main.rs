@@ -9,8 +9,10 @@ mod rocket;
 mod population;
 mod dna;
 mod constants;
+mod target;
 
 use population::Population;
+use target::Target;
 
 const SCREEN_WIDTH: isize  = 1200;
 const SCREEN_HEIGHT: isize = 800;
@@ -38,6 +40,9 @@ fn main() {
     let mut population =
         Population::new(&canvas, Point::new(SCREEN_WIDTH as i32 / 2, SCREEN_HEIGHT as i32));
 
+    let mut target =
+        Target::new(&canvas, Point::new(SCREEN_WIDTH as i32 / 2, 50));
+
     'running: loop {
         for event in event_pump.poll_iter() {
             match event {
@@ -51,6 +56,8 @@ fn main() {
 
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();
+
+        target.show(&mut canvas);
 
         population.run(&mut canvas);
 
