@@ -1,1 +1,1 @@
-pub const LIFESPAN: isize = 400;
+pub const LIFESPAN: isize = 300;

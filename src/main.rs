@@ -13,9 +13,16 @@ mod target;
 
 use population::Population;
 use target::Target;
+use constants::LIFESPAN;
 
 const SCREEN_WIDTH: isize  = 1200;
 const SCREEN_HEIGHT: isize = 800;
+
+const POPULATION_ORIGIN_X: i32 = SCREEN_WIDTH as i32 / 2;
+const POPULATION_ORIGIN_Y: i32 = SCREEN_HEIGHT as i32;
+
+const TARGET_ORIGIN_X: i32 = SCREEN_WIDTH as i32 / 2;
+const TARGET_ORIGIN_Y: i32 = 50;
 
 fn main() {
     let sdl_context = sdl2::init().unwrap();
@@ -37,12 +44,15 @@ fn main() {
 
     canvas.clear();
 
+    // Create the first population
     let mut population =
-        Population::new(&canvas, Point::new(SCREEN_WIDTH as i32 / 2, SCREEN_HEIGHT as i32));
+        Population::new(&canvas, Point::new(POPULATION_ORIGIN_X, POPULATION_ORIGIN_Y));
 
+    // Create the target
     let mut target =
-        Target::new(&canvas, Point::new(SCREEN_WIDTH as i32 / 2, 50));
+        Target::new(&canvas, Point::new(TARGET_ORIGIN_X, TARGET_ORIGIN_Y));
 
+    let mut count = 0;
     'running: loop {
         for event in event_pump.poll_iter() {
             match event {
@@ -57,9 +67,19 @@ fn main() {
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();
 
+        // Draw the target
         target.show(&mut canvas);
 
-        population.run(&mut canvas);
+        if count == LIFESPAN {
+            count = 0;
+            population =
+                Population::new(&canvas, Point::new(POPULATION_ORIGIN_X, POPULATION_ORIGIN_Y));
+
+        } else {
+            // Update and draw the population
+            population.run(&mut canvas);
+            count += 1;
+        }
 
         canvas.present();
 

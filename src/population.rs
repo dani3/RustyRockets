@@ -13,7 +13,7 @@ pub struct Population {
 impl Population {
     pub fn new(canvas: &Canvas<Window>, origin: Point) -> Self {
         let mut rockets = Vec::new();
-        for _ in 0..POPULATION_SIZE {
+        for _ in 0 .. POPULATION_SIZE {
             rockets.push(Rocket::new(canvas, origin));
         }
 
