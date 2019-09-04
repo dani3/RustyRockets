@@ -1,3 +1,5 @@
+use crate::constants::*;
+
 use vector2d::Vector2D;
 
 use sdl2::render::{Canvas, TextureCreator};
@@ -7,17 +9,20 @@ use sdl2::pixels::Color;
 
 const SIZE: i32 = 30;
 
+const TARGET_ORIGIN_X: i32 = SCREEN_WIDTH as i32 / 2;
+const TARGET_ORIGIN_Y: i32 = 50;
+
 pub struct Target {
     texture_creator : TextureCreator<WindowContext>,
     position : Vector2D<i32>
 }
 
 impl Target {
-    pub fn new(canvas: &Canvas<Window>, position : Point) -> Self {
+    pub fn new(canvas: &Canvas<Window>) -> Self {
         let texture_creator: TextureCreator<_> = canvas.texture_creator();
 
-        let x = position.x - SIZE / 2;
-        let y = position.y - SIZE / 2;
+        let x = TARGET_ORIGIN_X - SIZE / 2;
+        let y = TARGET_ORIGIN_Y - SIZE / 2;
 
         Target {
             texture_creator,
@@ -42,5 +47,9 @@ impl Target {
             , Point::new(SIZE as i32 / 2, SIZE as i32 / 2)
             , false
             , false);
+    }
+
+    pub fn get_position(&self) -> Vector2D<i32> {
+        self.position
     }
 }

@@ -1,6 +1,6 @@
 use crate::target::Target;
 use crate::dna::DNA;
-use crate::constants::LIFESPAN;
+use crate::constants::*;
 
 use vector2d::Vector2D;
 
@@ -15,29 +15,35 @@ use sdl2::pixels::Color;
 const HEIGHT: u32 = 25;
 const WIDTH: u32 = 5;
 
+fn map_range(from_range: (f64, f64), to_range: (f64, f64), s: f64) -> f64 {
+    to_range.0 + (s - from_range.0) * (to_range.1 - to_range.0) / (from_range.1 - from_range.0)
+}
+
 pub struct Rocket {
     texture_creator : TextureCreator<WindowContext>,
     position : Vector2D<f64>,
     velocity : Vector2D<f64>,
     acceleration : Vector2D<f64>,
-    dna : DNA,
     count : usize,
-    fitness : f64
+    pub dna : DNA,
+    pub fitness : f64
 }
 
 impl Rocket {
-    pub fn new(canvas: &Canvas<Window>, origin: Point) -> Self {
+    pub fn new(canvas: &Canvas<Window>, origin: Point, dna_optional : Option<DNA>) -> Self {
         let texture_creator: TextureCreator<_> = canvas.texture_creator();
 
         let x = origin.x - WIDTH as i32 / 2;
         let y = origin.y - HEIGHT as i32;
+
+        let dna = dna_optional.unwrap_or(DNA::new(None));
 
         Rocket {
             texture_creator,
             position : Vector2D::new(x as f64, y as f64),
             velocity : Vector2D::new(0.0, 0.0),
             acceleration : Vector2D::new(0.0, 0.0),
-            dna : DNA::new(LIFESPAN),
+            dna,
             count : 0,
             fitness : 0.0
         }
@@ -99,13 +105,10 @@ impl Rocket {
         ((ux - vx).powi(2) + (uy - vy).powi(2)).sqrt()
     }
 
+    /// Calculates the fitness based on the distance to the target
     pub fn calculate_fitness(&mut self, target : &Target) {
         let dist = self.calulate_distance_to_target(target);
 
-        if dist == 0.0 {
-            self.fitness = 1.0;
-        } else {
-            self.fitness = 1.0 / dist;
-        }
+        self.fitness = map_range((0.0, SCREEN_WIDTH as f64),(SCREEN_WIDTH as f64, 0.0), dist);
     }
 }
