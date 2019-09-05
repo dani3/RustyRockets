@@ -60,13 +60,14 @@ fn main() {
 
         if count == LIFESPAN {
             count = 0;
+
             population.evaluate(&target);
             population.natural_selection(&canvas);
-            //population = Population::new(&canvas);
 
         } else {
             // Update and draw the population
             population.run(&mut canvas, &target);
+
             count += 1;
         }
 

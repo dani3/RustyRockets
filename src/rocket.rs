@@ -26,6 +26,7 @@ pub struct Rocket {
     acceleration : Vector2D<f64>,
     count : usize,
     time_reached : usize,
+    crashed : bool,
     pub reached : bool,
     pub dna : DNA,
     pub fitness : f64
@@ -46,6 +47,7 @@ impl Rocket {
             velocity : Vector2D::new(0.0, 0.0),
             acceleration : Vector2D::new(0.0, 0.0),
             dna,
+            crashed : false,
             reached : false,
             time_reached : 0,
             count : 0,
@@ -65,6 +67,10 @@ impl Rocket {
         if dist < 10.0 {
             self.reached = true;
             self.time_reached = self.count;
+
+        } else if (self.position.x > SCREEN_WIDTH as f64) || (self.position.x < 0.0) || (self.position.y < 0.0) {
+            self.crashed = true;
+
         } else {
             self.apply_force(self.dna.get_genes()[self.count]);
             self.count += 1;
@@ -128,9 +134,12 @@ impl Rocket {
 
         if self.reached {
             // Reward those who reached the target and those who were faster
-            let time_reward = map_range((0.0, LIFESPAN as f64), (10.0, 2.0), self.time_reached as f64);
+            let time_reward = map_range((0.0, LIFESPAN as f64), (15.0, 5.0), self.time_reached as f64);
 
             self.fitness *= time_reward;
+
+        } else if self.crashed {
+            self.fitness *= 0.25;
         }
     }
 }
