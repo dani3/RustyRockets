@@ -16,9 +16,9 @@ impl DNA {
             };
 
         } else {
-
             let mut genes = Vec::new();
             let mut rng = rand::thread_rng();
+
             for _ in 0 .. LIFESPAN {
                 let vx = rng.gen_range(-0.5, 0.5) as f64;
                 let vy = rng.gen_range(-0.5, 0.5) as f64;
@@ -36,14 +36,14 @@ impl DNA {
         &self.genes
     }
 
+    /// Crosses over two different DNAs producing a new DNA
     pub fn crossover(&self, partner_dna : &DNA) -> DNA {
         let mut rng = rand::thread_rng();
 
         let mut new_genes : Vec<Vector2D<f64>> = Vec::new();
-        let mid = rng.gen_range(0, LIFESPAN);
-
         for i in 0 .. LIFESPAN {
-            if i > mid {
+            let parent_choice = rng.gen_range(0, 2) == 0;
+            if parent_choice {
                 new_genes.push(self.genes[i as usize]);
             } else {
                 new_genes.push(partner_dna.genes[i as usize]);
@@ -51,5 +51,19 @@ impl DNA {
         }
 
         DNA::new(Some(new_genes))
+    }
+
+    /// Generates some random mutation in a specific gene
+    pub fn mutate(&mut self) {
+        let mut rng = rand::thread_rng();
+
+        for i in 0 .. LIFESPAN {
+            if rng.gen_range(0.0, 1.0) < 0.01 {
+                let vx = rng.gen_range(-0.5, 0.5) as f64;
+                let vy = rng.gen_range(-0.5, 0.5) as f64;
+
+                self.genes[i as usize] = Vector2D::new(vx, vy);
+            }
+        }
     }
 }

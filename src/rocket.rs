@@ -118,9 +118,13 @@ impl Rocket {
         let dist = self.calulate_distance_to_target(target);
 
         if dist > SCREEN_WIDTH as f64 {
-            self.fitness = 10.0;
+            self.fitness = 1.0;
         } else {
             self.fitness = map_range((0.0, SCREEN_WIDTH as f64),(SCREEN_WIDTH as f64, 0.0), dist);
+        }
+
+        if self.reached {
+            self.fitness *= 1.25;
         }
 
         println!(" - Distance: {:?} -> Fitness: {:?}", dist as isize, self.fitness as isize);

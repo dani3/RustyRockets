@@ -80,7 +80,8 @@ impl Population {
             let parent_a = &self.rockets[*a].dna;
             let parent_b = &self.rockets[*b].dna;
 
-            let child = parent_a.crossover(parent_b);
+            let mut child = parent_a.crossover(parent_b);
+            child.mutate();
 
             self.rockets[i] = Rocket::new(
                     &canvas
