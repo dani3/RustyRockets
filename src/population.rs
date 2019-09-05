@@ -50,14 +50,19 @@ impl Population {
 
         println!("\nNew population starting:");
 
+        let mut average = 0.0;
         for i in 0 .. POPULATION_SIZE {
             self.rockets[i].calculate_fitness(target);
+            average += self.rockets[i].fitness;
             if self.rockets[i].fitness > max_fitness {
                 max_fitness = self.rockets[i].fitness;
             }
         }
 
-        println!(" - Maximum fitness of the previous generation: {:?}", max_fitness);
+        average /= POPULATION_SIZE as f64;
+
+        println!(" - Average fitness of the previous generation: {:.2}", average);
+        println!(" - Maximum fitness of the previous generation: {:.2}", max_fitness);
 
         for i in 0 .. POPULATION_SIZE {
             self.rockets[i].fitness /= max_fitness;
