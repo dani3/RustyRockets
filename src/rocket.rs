@@ -25,8 +25,8 @@ pub struct Rocket {
     velocity : Vector2D<f64>,
     acceleration : Vector2D<f64>,
     count : usize,
-    reached : bool,
     time_reached : usize,
+    pub reached : bool,
     pub dna : DNA,
     pub fitness : f64
 }

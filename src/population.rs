@@ -48,12 +48,18 @@ impl Population {
         let mut max_fitness = 0.0;
         self.mating_pool = Vec::new();
 
-        println!("\nNew population starting:");
+        println!("\nNew population has been born:");
 
         let mut average = 0.0;
+        let mut num_reached = 0;
         for i in 0 .. POPULATION_SIZE {
             self.rockets[i].calculate_fitness(target);
+
             average += self.rockets[i].fitness;
+            if self.rockets[i].reached {
+                num_reached += 1;
+            }
+
             if self.rockets[i].fitness > max_fitness {
                 max_fitness = self.rockets[i].fitness;
             }
@@ -63,6 +69,7 @@ impl Population {
 
         println!(" - Average fitness of the previous generation: {:.2}", average);
         println!(" - Maximum fitness of the previous generation: {:.2}", max_fitness);
+        println!(" - {:} rockets hit the target", num_reached);
 
         for i in 0 .. POPULATION_SIZE {
             self.rockets[i].fitness /= max_fitness;
