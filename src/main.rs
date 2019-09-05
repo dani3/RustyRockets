@@ -66,7 +66,7 @@ fn main() {
 
         } else {
             // Update and draw the population
-            population.run(&mut canvas);
+            population.run(&mut canvas, &target);
             count += 1;
         }
 

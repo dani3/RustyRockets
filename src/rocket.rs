@@ -12,8 +12,8 @@ use sdl2::rect::{Rect, Point};
 use sdl2::video::{WindowContext, Window};
 use sdl2::pixels::Color;
 
-const HEIGHT: u32 = 25;
-const WIDTH: u32 = 5;
+const HEIGHT: u32 = 15;
+const WIDTH: u32 = 3;
 
 fn map_range(from_range: (f64, f64), to_range: (f64, f64), s: f64) -> f64 {
     to_range.0 + (s - from_range.0) * (to_range.1 - to_range.0) / (from_range.1 - from_range.0)
@@ -25,6 +25,7 @@ pub struct Rocket {
     velocity : Vector2D<f64>,
     acceleration : Vector2D<f64>,
     count : usize,
+    reached : bool,
     pub dna : DNA,
     pub fitness : f64
 }
@@ -44,6 +45,7 @@ impl Rocket {
             velocity : Vector2D::new(0.0, 0.0),
             acceleration : Vector2D::new(0.0, 0.0),
             dna,
+            reached : false,
             count : 0,
             fitness : 0.0
         }
@@ -55,17 +57,23 @@ impl Rocket {
     }
 
     /// Updates the position based on the acceleration and velocity.
-    pub fn update(&mut self) {
-        self.apply_force(self.dna.get_genes()[self.count]);
-        self.count += 1;
+    pub fn update(&mut self, target : &Target) {
+        let dist = self.calulate_distance_to_target(target);
 
-        // Update the velocity based on the acceleration
-        self.velocity += self.acceleration;
-        // Update the position based on the velocity
-        self.position += self.velocity;
+        if dist < 10.0 {
+            self.reached = true;
+        } else {
+            self.apply_force(self.dna.get_genes()[self.count]);
+            self.count += 1;
 
-        // Clear the acceleration
-        self.acceleration = Vector2D::new(0.0, 0.0);
+            // Update the velocity based on the acceleration
+            self.velocity += self.acceleration;
+            // Update the position based on the velocity
+            self.position += self.velocity;
+
+            // Clear the acceleration
+            self.acceleration = Vector2D::new(0.0, 0.0);
+        }
     }
 
     /// Draws the rocket
@@ -101,8 +109,6 @@ impl Rocket {
 
         let ux = target.get_position().x as f64;
         let uy = target.get_position().y as f64;
-
-        println!("   - Distance between ({:?},{:?}) and ({:?},{:?})", vx as isize, vy as isize, ux as isize, uy as isize);
 
         ((ux - vx).powi(2) + (uy - vy).powi(2)).sqrt()
     }

@@ -8,7 +8,7 @@ use sdl2::render::Canvas;
 use sdl2::rect::Point;
 use sdl2::video::Window;
 
-const POPULATION_SIZE : usize = 5;
+const POPULATION_SIZE : usize = 100;
 
 const POPULATION_ORIGIN_X: i32 = SCREEN_WIDTH as i32 / 2;
 const POPULATION_ORIGIN_Y: i32 = SCREEN_HEIGHT as i32;
@@ -36,9 +36,9 @@ impl Population {
     }
 
     /// Updates and draws every rocket
-    pub fn run(&mut self, canvas: &mut Canvas<Window>) {
+    pub fn run(&mut self, canvas: &mut Canvas<Window>, target : &Target) {
         for i in 0 .. POPULATION_SIZE {
-            self.rockets[i].update();
+            self.rockets[i].update(target);
             self.rockets[i].show(canvas);
         }
     }
@@ -61,8 +61,6 @@ impl Population {
 
         for i in 0 .. POPULATION_SIZE {
             self.rockets[i].fitness /= max_fitness;
-
-            println!(" - Fitness of rocket {:?} = {:?}", i, self.rockets[i].fitness);
         }
 
         for i in 0 .. POPULATION_SIZE {
@@ -71,10 +69,9 @@ impl Population {
                 self.mating_pool.push(i);
             }
         }
-
-        println!("{:?}", self.mating_pool);
     }
 
+    /// Runs a natural selection on the current mating pool
     pub fn natural_selection(&mut self, canvas: &Canvas<Window>) {
         for i in 0 .. POPULATION_SIZE {
             let a = self.mating_pool.choose(&mut rand::thread_rng()).unwrap();

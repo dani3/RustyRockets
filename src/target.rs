@@ -7,7 +7,7 @@ use sdl2::video::{WindowContext, Window};
 use sdl2::rect::{Rect, Point};
 use sdl2::pixels::Color;
 
-const SIZE: i32 = 30;
+const SIZE: i32 = 15;
 
 const TARGET_ORIGIN_X: i32 = SCREEN_WIDTH as i32 / 2;
 const TARGET_ORIGIN_Y: i32 = 50;
@@ -21,8 +21,8 @@ impl Target {
     pub fn new(canvas: &Canvas<Window>) -> Self {
         let texture_creator: TextureCreator<_> = canvas.texture_creator();
 
-        let x = TARGET_ORIGIN_X - SIZE / 2;
-        let y = TARGET_ORIGIN_Y - SIZE / 2;
+        let x = TARGET_ORIGIN_X - (SIZE / 2);
+        let y = TARGET_ORIGIN_Y - (SIZE / 2);
 
         Target {
             texture_creator,
@@ -50,6 +50,6 @@ impl Target {
     }
 
     pub fn get_position(&self) -> Vector2D<i32> {
-        self.position
+        Vector2D::new(TARGET_ORIGIN_X, TARGET_ORIGIN_Y)
     }
 }
