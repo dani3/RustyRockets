@@ -15,6 +15,11 @@ use sdl2::pixels::Color;
 const HEIGHT: u32 = 15;
 const WIDTH: u32 = 3;
 
+const MAX_REWARD: f64 = 15.0;
+const MIN_REWARD: f64 = 5.0;
+
+const CRASH_PENALTY: f64 = 0.25;
+
 fn map_range(from_range: (f64, f64), to_range: (f64, f64), s: f64) -> f64 {
     to_range.0 + (s - from_range.0) * (to_range.1 - to_range.0) / (from_range.1 - from_range.0)
 }
@@ -134,12 +139,12 @@ impl Rocket {
 
         if self.reached {
             // Reward those who reached the target and those who were faster
-            let time_reward = map_range((0.0, LIFESPAN as f64), (15.0, 5.0), self.time_reached as f64);
+            let time_reward = map_range((0.0, LIFESPAN as f64), (MAX_REWARD, MIN_REWARD), self.time_reached as f64);
 
             self.fitness *= time_reward;
 
         } else if self.crashed {
-            self.fitness *= 0.25;
+            self.fitness *= CRASH_PENALTY;
         }
     }
 }
