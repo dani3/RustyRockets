@@ -1,4 +1,5 @@
 use crate::target::Target;
+use crate::obstacle::Obstacle;
 use crate::dna::DNA;
 use crate::constants::*;
 
@@ -66,27 +67,35 @@ impl Rocket {
     }
 
     /// Updates the position based on the acceleration and velocity.
-    pub fn update(&mut self, target : &Target) {
-        let dist = self.calulate_distance_to_target(target);
-
-        if dist < 10.0 {
-            self.reached = true;
-            self.time_reached = self.count;
+    pub fn update(&mut self, target : &Target, obstacle : &Obstacle) {
+        if obstacle.is_inside(Point::new(self.position.x as i32, self.position.y as i32)) {
+            self.crashed = true;
 
         } else if (self.position.x > SCREEN_WIDTH as f64) || (self.position.x < 0.0) || (self.position.y < 0.0) {
             self.crashed = true;
 
         } else {
-            self.apply_force(self.dna.get_genes()[self.count]);
-            self.count += 1;
+            let dist = self.calulate_distance_to_target(target);
 
-            // Update the velocity based on the acceleration
-            self.velocity += self.acceleration;
-            // Update the position based on the velocity
-            self.position += self.velocity;
+            if dist < 10.0 {
+                self.reached = true;
+                self.time_reached = self.count;
 
-            // Clear the acceleration
-            self.acceleration = Vector2D::new(0.0, 0.0);
+            } else if (self.position.x > SCREEN_WIDTH as f64) || (self.position.x < 0.0) || (self.position.y < 0.0) {
+                self.crashed = true;
+
+            } else {
+                self.apply_force(self.dna.get_genes()[self.count]);
+                self.count += 1;
+
+                // Update the velocity based on the acceleration
+                self.velocity += self.acceleration;
+                // Update the position based on the velocity
+                self.position += self.velocity;
+
+                // Clear the acceleration
+                self.acceleration = Vector2D::new(0.0, 0.0);
+            }
         }
     }
 

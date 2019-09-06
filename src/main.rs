@@ -3,15 +3,18 @@ use std::{thread, time};
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
+use sdl2::rect::Point;
 
 mod rocket;
 mod population;
 mod dna;
 mod constants;
 mod target;
+mod obstacle;
 
 use population::Population;
 use target::Target;
+use obstacle::Obstacle;
 use constants::*;
 
 fn main() {
@@ -40,6 +43,8 @@ fn main() {
     // Create the target
     let mut target = Target::new(&canvas);
 
+    let obstacle = Obstacle::new(Point::new(SCREEN_WIDTH as i32 / 2, SCREEN_HEIGHT as i32 / 2), SCREEN_WIDTH as u32 - (SCREEN_WIDTH as u32 / 3), 25);
+
     let mut count = 0;
     'running: loop {
         for event in event_pump.poll_iter() {
@@ -56,6 +61,7 @@ fn main() {
         canvas.clear();
 
         // Draw the target
+        obstacle.show(&mut canvas);
         target.show(&mut canvas);
 
         if count == LIFESPAN {
@@ -66,7 +72,7 @@ fn main() {
 
         } else {
             // Update and draw the population
-            population.run(&mut canvas, &target);
+            population.run(&mut canvas, &target, &obstacle);
 
             count += 1;
         }
