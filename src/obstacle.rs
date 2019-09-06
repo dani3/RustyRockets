@@ -6,9 +6,9 @@ use sdl2::pixels::Color;
 use vector2d::Vector2D;
 
 pub struct Obstacle {
-    position : Vector2D<f64>,
     width : u32,
-    height : u32
+    height : u32,
+    pub position : Vector2D<f64>
 }
 
 impl Obstacle {

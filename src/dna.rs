@@ -20,8 +20,8 @@ impl DNA {
             let mut rng = rand::thread_rng();
 
             for _ in 0 .. LIFESPAN {
-                let vx = rng.gen_range(-0.25, 0.25) as f64;
-                let vy = rng.gen_range(-0.25, 0.25) as f64;
+                let vx = rng.gen_range(-0.3, 0.3) as f64;
+                let vy = rng.gen_range(-0.3, 0.3) as f64;
 
                 genes.push(Vector2D::new(vx, vy));
             }
@@ -59,8 +59,8 @@ impl DNA {
 
         for i in 0 .. LIFESPAN {
             if rng.gen_range(0.0, 1.0) < 0.01 {
-                let vx = rng.gen_range(-0.25, 0.25) as f64;
-                let vy = rng.gen_range(-0.25, 0.25) as f64;
+                let vx = rng.gen_range(-0.3, 0.3) as f64;
+                let vy = rng.gen_range(-0.3, 0.3) as f64;
 
                 self.genes[i as usize] = Vector2D::new(vx, vy);
             }

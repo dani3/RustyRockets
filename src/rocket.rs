@@ -19,6 +19,8 @@ const WIDTH: u32 = 3;
 const MAX_REWARD: f64 = 15.0;
 const MIN_REWARD: f64 = 5.0;
 
+const OBSTACLE_PASSED_REWARD: f64 = 5.0;
+
 const CRASH_PENALTY: f64 = 0.25;
 
 fn map_range(from_range: (f64, f64), to_range: (f64, f64), s: f64) -> f64 {
@@ -137,10 +139,11 @@ impl Rocket {
     }
 
     /// Calculates the fitness based on the distance to the target
-    pub fn calculate_fitness(&mut self, target : &Target) {
+    pub fn calculate_fitness(&mut self, target : &Target, obstacle : &Obstacle) {
         let dist = self.calulate_distance_to_target(target);
 
         if dist > SCREEN_WIDTH as f64 {
+            // Penalise if the rocket is out of bounds
             self.fitness = 1.0;
         } else {
             self.fitness = map_range((0.0, SCREEN_WIDTH as f64),(SCREEN_WIDTH as f64, 0.0), dist);
@@ -153,7 +156,12 @@ impl Rocket {
             self.fitness *= time_reward;
 
         } else if self.crashed {
+            // Penalty if they crashed
             self.fitness *= CRASH_PENALTY;
+
+        } else if self.position.y <= obstacle.position.y {
+            // Reward if they went passed the obstacle
+            self.fitness *= OBSTACLE_PASSED_REWARD;
         }
     }
 }

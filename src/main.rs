@@ -43,7 +43,8 @@ fn main() {
     // Create the target
     let mut target = Target::new(&canvas);
 
-    let obstacle = Obstacle::new(Point::new(SCREEN_WIDTH as i32 / 2, SCREEN_HEIGHT as i32 / 2), SCREEN_WIDTH as u32 - (SCREEN_WIDTH as u32 / 3), 25);
+    let obstacle = Obstacle::new(
+        Point::new(SCREEN_WIDTH as i32 / 2, SCREEN_HEIGHT as i32 / 2), SCREEN_WIDTH as u32 - (SCREEN_WIDTH as u32 / 3), 25);
 
     let mut count = 0;
     'running: loop {
@@ -67,10 +68,13 @@ fn main() {
         if count == LIFESPAN {
             count = 0;
 
-            population.evaluate(&target);
+            population.evaluate(&target, &obstacle);
             population.natural_selection(&canvas);
 
+            println!();
+
         } else {
+            print!("-");
             // Update and draw the population
             population.run(&mut canvas, &target, &obstacle);
 
@@ -79,6 +83,6 @@ fn main() {
 
         canvas.present();
 
-        thread::sleep(time::Duration::from_millis(10));
+        thread::sleep(time::Duration::from_millis(5));
     }
 }

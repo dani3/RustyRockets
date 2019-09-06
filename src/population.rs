@@ -45,7 +45,7 @@ impl Population {
     }
 
     /// Evaluates every rocket based on its fitness
-    pub fn evaluate(&mut self, target : &Target) {
+    pub fn evaluate(&mut self, target : &Target, obstacle : &Obstacle) {
         let mut max_fitness = 0.0;
         self.mating_pool = Vec::new();
 
@@ -57,7 +57,7 @@ impl Population {
         // Iterate over the entire population
         for i in 0 .. POPULATION_SIZE {
             // Calculate each one's fitness
-            self.rockets[i].calculate_fitness(target);
+            self.rockets[i].calculate_fitness(target, obstacle);
 
             // And calculate the maximum fitness
             if self.rockets[i].fitness > max_fitness {
