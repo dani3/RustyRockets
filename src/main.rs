@@ -5,6 +5,8 @@ use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::rect::Point;
 
+use indicatif::{ProgressBar, ProgressStyle};
+
 mod rocket;
 mod population;
 mod dna;
@@ -37,6 +39,12 @@ fn main() {
 
     canvas.clear();
 
+    // Create progress bar
+    let mut pb = ProgressBar::new(LIFESPAN as u64);
+    pb.set_style(ProgressStyle::default_bar()
+        .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg}")
+        .progress_chars("=>-"));
+
     // Create the first population
     let mut population = Population::new(&canvas);
 
@@ -45,6 +53,8 @@ fn main() {
 
     let obstacle = Obstacle::new(
         Point::new(SCREEN_WIDTH as i32 / 2, SCREEN_HEIGHT as i32 / 2), SCREEN_WIDTH as u32 - (SCREEN_WIDTH as u32 / 3), 25);
+
+    println!();
 
     let mut count = 0;
     'running: loop {
@@ -68,13 +78,19 @@ fn main() {
         if count == LIFESPAN {
             count = 0;
 
+            pb.finish_with_message("finished");
+            pb = ProgressBar::new(LIFESPAN as u64);
+            pb.set_style(ProgressStyle::default_bar()
+                .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg}")
+                .progress_chars("=>-"));
+
             population.evaluate(&target, &obstacle);
             population.natural_selection(&canvas);
 
-            println!();
-
         } else {
-            print!("-");
+            pb.set_message(&format!("exploring"));
+            pb.inc(1);
+
             // Update and draw the population
             population.run(&mut canvas, &target, &obstacle);
 

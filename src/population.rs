@@ -16,7 +16,8 @@ const POPULATION_ORIGIN_Y: i32 = SCREEN_HEIGHT as i32;
 
 pub struct Population {
     rockets : Vec<Rocket>,
-    mating_pool : Vec<usize>
+    mating_pool : Vec<usize>,
+    generation : u32
 }
 
 impl Population {
@@ -32,7 +33,8 @@ impl Population {
 
         Population {
             rockets,
-            mating_pool : Vec::new()
+            mating_pool : Vec::new(),
+            generation : 0
         }
     }
 
@@ -48,8 +50,9 @@ impl Population {
     pub fn evaluate(&mut self, target : &Target, obstacle : &Obstacle) {
         let mut max_fitness = 0.0;
         self.mating_pool = Vec::new();
+        self.generation += 1;
 
-        println!("\nNew population has been born:");
+        println!("\nGeneration #{:} finished:", self.generation);
 
         let mut average = 0.0;
         let mut num_reached = 0;
@@ -70,9 +73,9 @@ impl Population {
             }
         }
 
-        println!(" - Average fitness of the previous generation: {:.2}", average / POPULATION_SIZE as f64);
-        println!(" - Maximum fitness of the previous generation: {:.2}", max_fitness);
-        println!(" - {:} rockets hit the target", num_reached);
+        println!(" - Average fitness: {:.2}", average / POPULATION_SIZE as f64);
+        println!(" - Maximum fitness: {:.2}", max_fitness);
+        println!(" - {:} rockets hit the target\n", num_reached);
 
         for i in 0 .. POPULATION_SIZE {
             self.rockets[i].fitness /= max_fitness;
