@@ -16,10 +16,11 @@ use sdl2::pixels::Color;
 const HEIGHT: u32 = 15;
 const WIDTH: u32 = 3;
 
-const MAX_REWARD: f64 = 15.0;
-const MIN_REWARD: f64 = 5.0;
+const MAX_REWARD: f64 = 20.0;
+const MIN_REWARD: f64 = 10.0;
 
-const OBSTACLE_PASSED_REWARD: f64 = 5.0;
+const OBSTACLE_PASSED_REWARD: f64 = 10.0;
+const OBSTACLE_NOT_PASSED_PENALTY: f64 = 0.5;
 
 const CRASH_PENALTY: f64 = 0.25;
 
@@ -145,16 +146,16 @@ impl Rocket {
     pub fn calculate_fitness(&mut self, target : &Target, obstacle : &Obstacle) {
         let dist = self.calulate_distance_to_target(target);
 
-        if dist > SCREEN_WIDTH as f64 {
+        if dist > SCREEN_HEIGHT as f64 {
             // Penalise if the rocket is out of bounds
             self.fitness = 1.0;
         } else {
-            self.fitness = map_range((0.0, SCREEN_HEIGHT as f64),(SCREEN_HEIGHT as f64, 0.0), dist);
+            self.fitness = map_range((0.0, SCREEN_HEIGHT as f64), (SCREEN_HEIGHT as f64, 0.0), dist);
         }
 
         if self.reached {
             // Reward those who reached the target and those who were faster
-            let time_reward = map_range((0.0, LIFESPAN as f64), (MAX_REWARD, MIN_REWARD), self.time_reached as f64);
+            let time_reward = map_range((LIFESPAN as f64 / 5.0, LIFESPAN as f64), (MAX_REWARD, MIN_REWARD), self.time_reached as f64);
 
             self.fitness *= time_reward;
 
@@ -162,9 +163,13 @@ impl Rocket {
             // Penalty if they crashed
             self.fitness *= CRASH_PENALTY;
 
-        } else if self.position.y <= obstacle.position.y {
+        } else if self.position.y < obstacle.position.y {
             // Reward if they went passed the obstacle
             self.fitness *= OBSTACLE_PASSED_REWARD;
+
+        } else if self.position.y >= obstacle.position.y {
+            // Penalty if the did not go passed the obstacle
+            self.fitness *= OBSTACLE_NOT_PASSED_PENALTY;
         }
     }
 }
