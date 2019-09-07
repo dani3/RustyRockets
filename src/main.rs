@@ -42,7 +42,7 @@ fn main() {
     // Create progress bar
     let mut pb = ProgressBar::new(LIFESPAN as u64);
     pb.set_style(ProgressStyle::default_bar()
-        .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg}")
+        .template("{spinner:.green} [{elapsed_precise}] {bar:60.cyan/blue} {pos:>7}/{len:7} {msg} ({eta})")
         .progress_chars("=>-"));
 
     // Create the first population
@@ -81,7 +81,7 @@ fn main() {
             pb.finish_with_message("finished");
             pb = ProgressBar::new(LIFESPAN as u64);
             pb.set_style(ProgressStyle::default_bar()
-                .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg}")
+                .template("{spinner:.green} [{elapsed_precise}] {bar:60.cyan/blue} {pos:>7}/{len:7} {msg} ({eta})")
                 .progress_chars("=>-"));
 
             population.evaluate(&target, &obstacle);
