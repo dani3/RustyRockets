@@ -19,10 +19,10 @@ const WIDTH: u32 = 3;
 const MAX_REWARD: f64 = 20.0;
 const MIN_REWARD: f64 = 10.0;
 
-const OBSTACLE_PASSED_REWARD: f64 = 10.0;
-const OBSTACLE_NOT_PASSED_PENALTY: f64 = 0.5;
+const OBSTACLE_PASSED_REWARD: f64 = 2.0;
+const OBSTACLE_NOT_PASSED_PENALTY: f64 = 0.25;
 
-const CRASH_PENALTY: f64 = 0.25;
+const CRASH_PENALTY: f64 = 0.10;
 
 fn map_range(from_range: (f64, f64), to_range: (f64, f64), s: f64) -> f64 {
     to_range.0 + (s - from_range.0) * (to_range.1 - to_range.0) / (from_range.1 - from_range.0)
@@ -150,7 +150,7 @@ impl Rocket {
             // Penalise if the rocket is out of bounds
             self.fitness = 1.0;
         } else {
-            self.fitness = map_range((0.0, SCREEN_HEIGHT as f64), (SCREEN_HEIGHT as f64, 0.0), dist);
+            self.fitness = map_range((10.0, SCREEN_HEIGHT as f64), (SCREEN_HEIGHT as f64, 0.0), dist);
         }
 
         if self.reached {
@@ -162,8 +162,9 @@ impl Rocket {
         } else if self.crashed {
             // Penalty if they crashed
             self.fitness *= CRASH_PENALTY;
+        }
 
-        } else if self.position.y < obstacle.position.y {
+        if self.position.y < obstacle.position.y {
             // Reward if they went passed the obstacle
             self.fitness *= OBSTACLE_PASSED_REWARD;
 

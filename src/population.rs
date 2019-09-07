@@ -9,7 +9,7 @@ use sdl2::render::Canvas;
 use sdl2::rect::Point;
 use sdl2::video::Window;
 
-const POPULATION_SIZE : usize = 500;
+const POPULATION_SIZE : usize = 300;
 
 const POPULATION_ORIGIN_X: i32 = SCREEN_WIDTH as i32 / 2;
 const POPULATION_ORIGIN_Y: i32 = SCREEN_HEIGHT as i32;
