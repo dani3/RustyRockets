@@ -44,7 +44,7 @@ impl Target {
             , None
             , Rect::new(self.position.x as i32, self.position.y as i32, SIZE as u32, SIZE as u32)
             , 0.0
-            , Point::new(SIZE as i32 / 2, SIZE as i32 / 2)
+            , Point::new(0, 0)
             , false
             , false);
     }

@@ -68,7 +68,7 @@ fn main() {
             }
         }
 
-        canvas.set_draw_color(Color::RGB(0, 0, 0));
+        canvas.set_draw_color(Color::RGB(40, 44, 52));
         canvas.clear();
 
         // Draw the target

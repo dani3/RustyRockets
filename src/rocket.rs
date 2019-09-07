@@ -83,7 +83,10 @@ impl Rocket {
                 self.reached = true;
                 self.time_reached = self.count;
 
-            } else if (self.position.x > SCREEN_WIDTH as f64) || (self.position.x < 0.0) || (self.position.y < 0.0) {
+            } else if (self.position.x > SCREEN_WIDTH as f64) || (self.position.x < 0.0) {
+                self.crashed = true;
+
+            } else if ((self.position.y as i32) < 0) || ((self.position.y as u32) + HEIGHT > SCREEN_HEIGHT as u32) {
                 self.crashed = true;
 
             } else {
@@ -146,7 +149,7 @@ impl Rocket {
             // Penalise if the rocket is out of bounds
             self.fitness = 1.0;
         } else {
-            self.fitness = map_range((0.0, SCREEN_WIDTH as f64),(SCREEN_WIDTH as f64, 0.0), dist);
+            self.fitness = map_range((0.0, SCREEN_HEIGHT as f64),(SCREEN_HEIGHT as f64, 0.0), dist);
         }
 
         if self.reached {
