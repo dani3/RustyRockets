@@ -88,7 +88,6 @@ fn main() {
             population.natural_selection(&canvas);
 
         } else {
-            pb.set_message(&format!("exploring"));
             pb.inc(1);
 
             // Update and draw the population
