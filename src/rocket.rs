@@ -11,7 +11,6 @@ use std::f64::consts::PI;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
 use sdl2::render::{Canvas, Texture};
-use sdl2::video::Window;
 
 const HEIGHT: u32 = 15;
 const WIDTH: u32 = 3;
@@ -41,7 +40,7 @@ pub struct Rocket {
 }
 
 impl Rocket {
-    pub fn new(canvas: &Canvas<Window>, origin: Point, dna_optional: Option<DNA>) -> Self {
+    pub fn new(origin: Point, dna_optional: Option<DNA>) -> Self {
         let x = origin.x - WIDTH as i32 / 2;
         let y = origin.y - HEIGHT as i32;
 

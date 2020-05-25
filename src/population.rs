@@ -2,7 +2,7 @@ use crate::constants::*;
 use crate::obstacle::Obstacle;
 use crate::rocket::Rocket;
 use crate::target::Target;
-use crate::texture_pool::Cache;
+use crate::texture_pool::TexturePool;
 
 use rand::seq::SliceRandom;
 
@@ -22,11 +22,10 @@ pub struct Population {
 }
 
 impl Population {
-    pub fn new(canvas: &Canvas<Window>) -> Self {
+    pub fn new() -> Self {
         let mut rockets = Vec::new();
         for _ in 0..POPULATION_SIZE {
             rockets.push(Rocket::new(
-                canvas,
                 Point::new(POPULATION_ORIGIN_X, POPULATION_ORIGIN_Y),
                 None,
             ));
@@ -45,11 +44,11 @@ impl Population {
         canvas: &mut Canvas<Window>,
         target: &Target,
         obstacle: &Obstacle,
-        cache: &mut Cache,
+        texture_pool: &mut TexturePool,
     ) {
         for i in 0..POPULATION_SIZE {
             self.rockets[i].update(target, obstacle);
-            self.rockets[i].show(canvas, &mut cache.textures[i]);
+            self.rockets[i].show(canvas, &mut texture_pool.textures[i]);
         }
     }
 
@@ -100,7 +99,7 @@ impl Population {
     }
 
     /// Runs a natural selection on the current mating pool
-    pub fn natural_selection(&mut self, canvas: &Canvas<Window>) {
+    pub fn natural_selection(&mut self) {
         for i in 0..POPULATION_SIZE {
             // Choose two random parents
             let a = self.mating_pool.choose(&mut rand::thread_rng()).unwrap();
@@ -116,7 +115,6 @@ impl Population {
             child.mutate();
 
             self.rockets[i] = Rocket::new(
-                &canvas,
                 Point::new(POPULATION_ORIGIN_X, POPULATION_ORIGIN_Y),
                 Some(child),
             );

@@ -19,7 +19,7 @@ use constants::*;
 use obstacle::Obstacle;
 use population::Population;
 use target::Target;
-use texture_pool::{Cache, TexturePool};
+use texture_pool::{TextureManager, TexturePool};
 
 fn main() {
     let sdl_context = sdl2::init().unwrap();
@@ -50,7 +50,7 @@ fn main() {
         .progress_chars("=>-"));
 
     // Create the first population
-    let mut population = Population::new(&canvas);
+    let mut population = Population::new();
 
     // Create the target
     let mut target = Target::new(&canvas);
@@ -62,8 +62,8 @@ fn main() {
     );
 
     // Create a texture pool
-    let texture_creator = TexturePool::new(&canvas);
-    let mut cache = Cache::new(&texture_creator.texture_creator);
+    let texture_creator = TextureManager::new(&canvas);
+    let mut texture_pool = TexturePool::new(&texture_creator.texture_creator);
 
     println!();
 
@@ -97,12 +97,12 @@ fn main() {
                 .progress_chars("=>-"));
 
             population.evaluate(&target, &obstacle);
-            population.natural_selection(&canvas);
+            population.natural_selection();
         } else {
             pb.inc(1);
 
             // Update and draw the population
-            population.run(&mut canvas, &target, &obstacle, &mut cache);
+            population.run(&mut canvas, &target, &obstacle, &mut texture_pool);
 
             count += 1;
         }

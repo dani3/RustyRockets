@@ -6,11 +6,11 @@ const WIDTH: u32 = 3;
 
 const POPULATION_SIZE: usize = 300;
 
-pub struct Cache<'s> {
+pub struct TexturePool<'s> {
     pub textures: Vec<Texture<'s>>,
 }
 
-impl<'s> Cache<'s> {
+impl<'s> TexturePool<'s> {
     pub fn new(texture_creator: &'s TextureCreator<WindowContext>) -> Self {
         let mut textures = vec![];
         for _ in 0..POPULATION_SIZE {
@@ -21,18 +21,18 @@ impl<'s> Cache<'s> {
             textures.push(texture)
         }
 
-        Cache { textures }
+        TexturePool { textures }
     }
 }
 
-pub struct TexturePool {
+pub struct TextureManager {
     pub texture_creator: TextureCreator<WindowContext>,
 }
 
-impl TexturePool {
+impl TextureManager {
     pub fn new(canvas: &Canvas<Window>) -> Self {
         let texture_creator: TextureCreator<_> = canvas.texture_creator();
 
-        TexturePool { texture_creator }
+        TextureManager { texture_creator }
     }
 }
