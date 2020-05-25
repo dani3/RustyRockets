@@ -13,10 +13,12 @@ mod dna;
 mod constants;
 mod target;
 mod obstacle;
+mod texture_pool;
 
 use population::Population;
 use target::Target;
 use obstacle::Obstacle;
+use texture_pool::{TexturePool, Cache};
 use constants::*;
 
 fn main() {
@@ -53,6 +55,10 @@ fn main() {
 
     let obstacle = Obstacle::new(
         Point::new(SCREEN_WIDTH as i32 / 2, SCREEN_HEIGHT as i32 / 2), SCREEN_WIDTH as u32 - (SCREEN_WIDTH as u32 / 3), 25);
+
+    // Create a texture pool
+    let texture_creator = TexturePool::new(&canvas);
+    let mut cache = Cache::new(&texture_creator.texture_creator);
 
     println!();
 
@@ -91,7 +97,7 @@ fn main() {
             pb.inc(1);
 
             // Update and draw the population
-            population.run(&mut canvas, &target, &obstacle);
+            population.run(&mut canvas, &target, &obstacle, &mut cache);
 
             count += 1;
         }

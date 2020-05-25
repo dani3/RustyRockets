@@ -2,6 +2,7 @@ use crate::rocket::Rocket;
 use crate::target::Target;
 use crate::obstacle::Obstacle;
 use crate::constants::*;
+use crate::texture_pool::Cache;
 
 use rand::seq::SliceRandom;
 
@@ -39,10 +40,10 @@ impl Population {
     }
 
     /// Updates and draws every rocket
-    pub fn run(&mut self, canvas: &mut Canvas<Window>, target : &Target, obstacle : &Obstacle) {
+    pub fn run(&mut self, canvas: &mut Canvas<Window>, target : &Target, obstacle : &Obstacle, cache : &mut Cache) {
         for i in 0 .. POPULATION_SIZE {
             self.rockets[i].update(target, obstacle);
-            self.rockets[i].show(canvas);
+            self.rockets[i].show(canvas, &mut cache.textures[i]);
         }
     }
 
