@@ -7,31 +7,33 @@ use sdl2::rect::Point;
 
 use indicatif::{ProgressBar, ProgressStyle};
 
-mod rocket;
-mod population;
-mod dna;
 mod constants;
-mod target;
+mod dna;
 mod obstacle;
+mod population;
+mod rocket;
+mod target;
 mod texture_pool;
 
+use constants::*;
+use obstacle::Obstacle;
 use population::Population;
 use target::Target;
-use obstacle::Obstacle;
-use texture_pool::{TexturePool, Cache};
-use constants::*;
+use texture_pool::{Cache, TexturePool};
 
 fn main() {
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
 
-    let window = video_subsystem.window("Rusty Rockets", SCREEN_WIDTH as u32, SCREEN_HEIGHT as u32)
+    let window = video_subsystem
+        .window("Rusty Rockets", SCREEN_WIDTH as u32, SCREEN_HEIGHT as u32)
         .position_centered()
         .opengl()
         .build()
         .unwrap();
 
-    let mut canvas = window.into_canvas()
+    let mut canvas = window
+        .into_canvas()
         .target_texture()
         .present_vsync()
         .build()
@@ -54,7 +56,10 @@ fn main() {
     let mut target = Target::new(&canvas);
 
     let obstacle = Obstacle::new(
-        Point::new(SCREEN_WIDTH as i32 / 2, SCREEN_HEIGHT as i32 / 2), SCREEN_WIDTH as u32 - (SCREEN_WIDTH as u32 / 3), 25);
+        Point::new(SCREEN_WIDTH as i32 / 2, SCREEN_HEIGHT as i32 / 2),
+        SCREEN_WIDTH as u32 - (SCREEN_WIDTH as u32 / 3),
+        25,
+    );
 
     // Create a texture pool
     let texture_creator = TexturePool::new(&canvas);
@@ -66,10 +71,11 @@ fn main() {
     'running: loop {
         for event in event_pump.poll_iter() {
             match event {
-                Event::Quit {..} |
-                Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
-                    break 'running
-                },
+                Event::Quit { .. }
+                | Event::KeyDown {
+                    keycode: Some(Keycode::Escape),
+                    ..
+                } => break 'running,
                 _ => {}
             }
         }
@@ -92,7 +98,6 @@ fn main() {
 
             population.evaluate(&target, &obstacle);
             population.natural_selection(&canvas);
-
         } else {
             pb.inc(1);
 

@@ -1,17 +1,17 @@
-use crate::target::Target;
-use crate::obstacle::Obstacle;
-use crate::dna::DNA;
 use crate::constants::*;
+use crate::dna::DNA;
+use crate::obstacle::Obstacle;
+use crate::target::Target;
 
 use vector2d::Vector2D;
 
-use std::f64::consts::PI;
 use std::f64;
+use std::f64::consts::PI;
 
-use sdl2::render::{Canvas, Texture};
-use sdl2::rect::{Rect, Point};
-use sdl2::video::Window;
 use sdl2::pixels::Color;
+use sdl2::rect::{Point, Rect};
+use sdl2::render::{Canvas, Texture};
+use sdl2::video::Window;
 
 const HEIGHT: u32 = 15;
 const WIDTH: u32 = 3;
@@ -29,34 +29,34 @@ fn map_range(from_range: (f64, f64), to_range: (f64, f64), s: f64) -> f64 {
 }
 
 pub struct Rocket {
-    position : Vector2D<f64>,
-    velocity : Vector2D<f64>,
-    acceleration : Vector2D<f64>,
-    count : usize,
-    time_reached : usize,
-    crashed : bool,
-    pub reached : bool,
-    pub dna : DNA,
-    pub fitness : f64
+    position: Vector2D<f64>,
+    velocity: Vector2D<f64>,
+    acceleration: Vector2D<f64>,
+    count: usize,
+    time_reached: usize,
+    crashed: bool,
+    pub reached: bool,
+    pub dna: DNA,
+    pub fitness: f64,
 }
 
 impl Rocket {
-    pub fn new(canvas: &Canvas<Window>, origin: Point, dna_optional : Option<DNA>) -> Self {
+    pub fn new(canvas: &Canvas<Window>, origin: Point, dna_optional: Option<DNA>) -> Self {
         let x = origin.x - WIDTH as i32 / 2;
         let y = origin.y - HEIGHT as i32;
 
         let dna = dna_optional.unwrap_or(DNA::new(None));
 
         Rocket {
-            position : Vector2D::new(x as f64, y as f64),
-            velocity : Vector2D::new(0.0, 0.0),
-            acceleration : Vector2D::new(0.0, 0.0),
+            position: Vector2D::new(x as f64, y as f64),
+            velocity: Vector2D::new(0.0, 0.0),
+            acceleration: Vector2D::new(0.0, 0.0),
             dna,
-            crashed : false,
-            reached : false,
-            time_reached : 0,
-            count : 0,
-            fitness : 0.0
+            crashed: false,
+            reached: false,
+            time_reached: 0,
+            count: 0,
+            fitness: 0.0,
         }
     }
 
@@ -66,26 +66,26 @@ impl Rocket {
     }
 
     /// Updates the position based on the acceleration and velocity.
-    pub fn update(&mut self, target : &Target, obstacle : &Obstacle) {
+    pub fn update(&mut self, target: &Target, obstacle: &Obstacle) {
         if obstacle.is_inside(Point::new(self.position.x as i32, self.position.y as i32)) {
             self.crashed = true;
-
-        } else if (self.position.x > SCREEN_WIDTH as f64) || (self.position.x < 0.0) || (self.position.y < 0.0) {
+        } else if (self.position.x > SCREEN_WIDTH as f64)
+            || (self.position.x < 0.0)
+            || (self.position.y < 0.0)
+        {
             self.crashed = true;
-
         } else {
             let dist = self.calulate_distance_to_target(target);
 
             if dist < 10.0 {
                 self.reached = true;
                 self.time_reached = self.count;
-
             } else if (self.position.x > SCREEN_WIDTH as f64) || (self.position.x < 0.0) {
                 self.crashed = true;
-
-            } else if ((self.position.y as i32) < 0) || ((self.position.y as u32) + HEIGHT > SCREEN_HEIGHT as u32) {
+            } else if ((self.position.y as i32) < 0)
+                || ((self.position.y as u32) + HEIGHT > SCREEN_HEIGHT as u32)
+            {
                 self.crashed = true;
-
             } else {
                 self.apply_force(self.dna.get_genes()[self.count]);
                 self.count += 1;
@@ -102,7 +102,7 @@ impl Rocket {
     }
 
     /// Draws the rocket
-    pub fn show(&mut self, canvas: &mut Canvas<sdl2::video::Window>, texture :&mut Texture) {
+    pub fn show(&mut self, canvas: &mut Canvas<sdl2::video::Window>, texture: &mut Texture) {
         let _ = canvas.with_texture_canvas(texture, |texture_canvas| {
             texture_canvas.set_draw_color(Color::RGBA(200, 200, 200, 255));
             texture_canvas.clear();
@@ -116,16 +116,22 @@ impl Rocket {
         }
 
         let _ = canvas.copy_ex(
-              &texture
-            , None
-            , Rect::new(self.position.x as i32, self.position.y as i32, WIDTH, HEIGHT)
-            , angle
-            , Point::new(WIDTH as i32 / 2, HEIGHT as i32 / 2)
-            , false
-            , false);
+            &texture,
+            None,
+            Rect::new(
+                self.position.x as i32,
+                self.position.y as i32,
+                WIDTH,
+                HEIGHT,
+            ),
+            angle,
+            Point::new(WIDTH as i32 / 2, HEIGHT as i32 / 2),
+            false,
+            false,
+        );
     }
 
-    fn calulate_distance_to_target(&self, target : &Target) -> f64 {
+    fn calulate_distance_to_target(&self, target: &Target) -> f64 {
         let vx = self.position.x;
         let vy = self.position.y;
 
@@ -136,22 +142,29 @@ impl Rocket {
     }
 
     /// Calculates the fitness based on the distance to the target
-    pub fn calculate_fitness(&mut self, target : &Target, obstacle : &Obstacle) {
+    pub fn calculate_fitness(&mut self, target: &Target, obstacle: &Obstacle) {
         let dist = self.calulate_distance_to_target(target);
 
         if dist > SCREEN_HEIGHT as f64 {
             // Penalise if the rocket is out of bounds
             self.fitness = 1.0;
         } else {
-            self.fitness = map_range((10.0, SCREEN_HEIGHT as f64), (SCREEN_HEIGHT as f64, 0.0), dist);
+            self.fitness = map_range(
+                (10.0, SCREEN_HEIGHT as f64),
+                (SCREEN_HEIGHT as f64, 0.0),
+                dist,
+            );
         }
 
         if self.reached {
             // Reward those who reached the target and those who were faster
-            let time_reward = map_range((LIFESPAN as f64 / 5.0, LIFESPAN as f64), (MAX_REWARD, MIN_REWARD), self.time_reached as f64);
+            let time_reward = map_range(
+                (LIFESPAN as f64 / 5.0, LIFESPAN as f64),
+                (MAX_REWARD, MIN_REWARD),
+                self.time_reached as f64,
+            );
 
             self.fitness *= time_reward;
-
         } else if self.crashed {
             // Penalty if they crashed
             self.fitness *= CRASH_PENALTY;
@@ -160,7 +173,6 @@ impl Rocket {
         if self.position.y < obstacle.position.y {
             // Reward if they went passed the obstacle
             self.fitness *= OBSTACLE_PASSED_REWARD;
-
         } else if self.position.y >= obstacle.position.y {
             // Penalty if the did not go passed the obstacle
             self.fitness *= OBSTACLE_NOT_PASSED_PENALTY;
