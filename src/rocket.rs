@@ -1,6 +1,7 @@
 use crate::constants::*;
 use crate::dna::DNA;
 use crate::obstacle::Obstacle;
+use crate::sprite::TexturedSprite;
 use crate::target::Target;
 
 use vector2d::Vector2D;
@@ -11,6 +12,7 @@ use std::f64::consts::PI;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
 use sdl2::render::{Canvas, Texture};
+use sdl2::video::Window;
 
 const HEIGHT: u32 = 15;
 const WIDTH: u32 = 3;
@@ -100,36 +102,6 @@ impl Rocket {
         }
     }
 
-    /// Draws the rocket
-    pub fn show(&mut self, canvas: &mut Canvas<sdl2::video::Window>, texture: &mut Texture) {
-        let _ = canvas.with_texture_canvas(texture, |texture_canvas| {
-            texture_canvas.set_draw_color(Color::RGBA(200, 200, 200, 255));
-            texture_canvas.clear();
-        });
-
-        let angle;
-        if self.velocity.angle() == 0.0 {
-            angle = 0.0;
-        } else {
-            angle = 90.0 + (self.velocity.angle() * 180.0 / PI);
-        }
-
-        let _ = canvas.copy_ex(
-            &texture,
-            None,
-            Rect::new(
-                self.position.x as i32,
-                self.position.y as i32,
-                WIDTH,
-                HEIGHT,
-            ),
-            angle,
-            Point::new(WIDTH as i32 / 2, HEIGHT as i32 / 2),
-            false,
-            false,
-        );
-    }
-
     fn calulate_distance_to_target(&self, target: &Target) -> f64 {
         let vx = self.position.x;
         let vy = self.position.y;
@@ -176,5 +148,36 @@ impl Rocket {
             // Penalty if the did not go passed the obstacle
             self.fitness *= OBSTACLE_NOT_PASSED_PENALTY;
         }
+    }
+}
+
+impl TexturedSprite for Rocket {
+    fn draw(&self, canvas: &mut Canvas<Window>, texture: &mut Texture) {
+        let _ = canvas.with_texture_canvas(texture, |texture_canvas| {
+            texture_canvas.set_draw_color(Color::RGBA(200, 200, 200, 255));
+            texture_canvas.clear();
+        });
+
+        let angle;
+        if self.velocity.angle() == 0.0 {
+            angle = 0.0;
+        } else {
+            angle = 90.0 + (self.velocity.angle() * 180.0 / PI);
+        }
+
+        let _ = canvas.copy_ex(
+            &texture,
+            None,
+            Rect::new(
+                self.position.x as i32,
+                self.position.y as i32,
+                WIDTH,
+                HEIGHT,
+            ),
+            angle,
+            Point::new(WIDTH as i32 / 2, HEIGHT as i32 / 2),
+            false,
+            false,
+        );
     }
 }

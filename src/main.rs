@@ -12,12 +12,14 @@ mod dna;
 mod obstacle;
 mod population;
 mod rocket;
+mod sprite;
 mod target;
 mod texture_pool;
 
 use constants::*;
 use obstacle::Obstacle;
 use population::Population;
+use sprite::Sprite;
 use target::Target;
 use texture_pool::{TextureManager, TexturePool};
 
@@ -51,10 +53,9 @@ fn main() {
 
     // Create the first population
     let mut population = Population::new();
-
     // Create the target
-    let mut target = Target::new(&canvas);
-
+    let target = Target::new();
+    // Create an obstacle
     let obstacle = Obstacle::new(
         Point::new(SCREEN_WIDTH as i32 / 2, SCREEN_HEIGHT as i32 / 2),
         SCREEN_WIDTH as u32 - (SCREEN_WIDTH as u32 / 3),
@@ -62,8 +63,8 @@ fn main() {
     );
 
     // Create a texture pool
-    let texture_creator = TextureManager::new(&canvas);
-    let mut texture_pool = TexturePool::new(&texture_creator.texture_creator);
+    let texture_manager = TextureManager::new(&canvas);
+    let mut texture_pool = TexturePool::new(&texture_manager.texture_creator);
 
     println!();
 
@@ -84,8 +85,8 @@ fn main() {
         canvas.clear();
 
         // Draw the target
-        obstacle.show(&mut canvas);
-        target.show(&mut canvas);
+        obstacle.draw(&mut canvas);
+        target.draw(&mut canvas);
 
         if count == LIFESPAN {
             count = 0;

@@ -5,6 +5,8 @@ use sdl2::video::Window;
 
 use vector2d::Vector2D;
 
+use crate::sprite::Sprite;
+
 pub struct Obstacle {
     width: u32,
     height: u32,
@@ -23,17 +25,6 @@ impl Obstacle {
         }
     }
 
-    pub fn show(&self, canvas: &mut Canvas<Window>) {
-        canvas.set_draw_color(Color::RGB(200, 200, 200));
-
-        let _ = canvas.fill_rect(Rect::new(
-            self.position.x as i32,
-            self.position.y as i32,
-            self.width,
-            self.height,
-        ));
-    }
-
     pub fn is_inside(&self, position: Point) -> bool {
         if (position.y >= self.position.y as i32)
             && (position.y <= (self.position.y as i32 + self.height as i32))
@@ -46,5 +37,18 @@ impl Obstacle {
         }
 
         false
+    }
+}
+
+impl Sprite for Obstacle {
+    fn draw(&self, canvas: &mut Canvas<Window>) {
+        canvas.set_draw_color(Color::RGB(200, 200, 200));
+
+        let _ = canvas.fill_rect(Rect::new(
+            self.position.x as i32,
+            self.position.y as i32,
+            self.width,
+            self.height,
+        ));
     }
 }

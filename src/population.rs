@@ -1,6 +1,7 @@
 use crate::constants::*;
 use crate::obstacle::Obstacle;
 use crate::rocket::Rocket;
+use crate::sprite::TexturedSprite;
 use crate::target::Target;
 use crate::texture_pool::TexturePool;
 
@@ -48,7 +49,7 @@ impl Population {
     ) {
         for i in 0..POPULATION_SIZE {
             self.rockets[i].update(target, obstacle);
-            self.rockets[i].show(canvas, &mut texture_pool.textures[i]);
+            self.rockets[i].draw(canvas, &mut texture_pool.textures[i]);
         }
     }
 
