@@ -20,7 +20,7 @@ mod target;
 use constants::*;
 use drawer::{Drawer, TexturePool};
 use obstacle::Obstacle;
-use population::Population;
+use population::{Population, POPULATION_SIZE};
 use target::Target;
 
 fn main() {
@@ -51,6 +51,9 @@ fn main() {
     let mut txp = TexturePool::new();
     txp.add(&txc, target.height, target.width);
     txp.add(&txc, target.height, target.width);
+    for _ in 0..POPULATION_SIZE {
+        txp.add(&txc, 15, 3);
+    }
 
     let mut count = 0;
     'running: loop {
@@ -86,8 +89,12 @@ fn main() {
         } else {
             pb.inc(1);
 
-            // Update and draw the population
-            //population.run(&mut canvas, &target, &obstacle, &mut texture_pool);
+            for (i, rocket) in population.rockets.iter_mut().enumerate() {
+                rocket.update(&target, &obstacle);
+                drawer
+                    .borrow()
+                    .draw_sprite(rocket, &mut txp.textures[i + 2]);
+            }
 
             count += 1;
         }

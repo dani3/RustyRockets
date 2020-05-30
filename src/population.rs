@@ -1,25 +1,19 @@
-use std::cell::RefCell;
-
 use crate::constants::*;
-use crate::drawer::TexturePool;
 use crate::obstacle::Obstacle;
 use crate::rocket::Rocket;
-use crate::sprite::Sprite;
 use crate::target::Target;
 
 use rand::seq::SliceRandom;
 
 use sdl2::rect::Point;
-use sdl2::render::Canvas;
-use sdl2::video::Window;
 
-const POPULATION_SIZE: usize = 300;
+pub const POPULATION_SIZE: usize = 300;
 
 const POPULATION_ORIGIN_X: i32 = SCREEN_WIDTH as i32 / 2;
 const POPULATION_ORIGIN_Y: i32 = SCREEN_HEIGHT as i32;
 
 pub struct Population {
-    rockets: Vec<Rocket>,
+    pub rockets: Vec<Rocket>,
     mating_pool: Vec<usize>,
     generation: u32,
 }
@@ -38,20 +32,6 @@ impl Population {
             rockets,
             mating_pool: Vec::new(),
             generation: 0,
-        }
-    }
-
-    /// Updates and draws every rocket
-    pub fn run(
-        &mut self,
-        canvas: &mut Canvas<Window>,
-        target: &Target,
-        obstacle: &Obstacle,
-        texture_pool: &mut TexturePool,
-    ) {
-        for i in 0..POPULATION_SIZE {
-            self.rockets[i].update(target, obstacle);
-            self.rockets[i].draw(canvas, &mut texture_pool.textures[i]);
         }
     }
 

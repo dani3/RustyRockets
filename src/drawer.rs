@@ -9,7 +9,7 @@ use crate::constants::*;
 use crate::sprite::Sprite;
 
 pub struct Drawer {
-    canvas: RefCell<Canvas<Window>>,
+    pub canvas: RefCell<Canvas<Window>>,
     pub texture_creator: TextureCreator<WindowContext>,
 }
 
