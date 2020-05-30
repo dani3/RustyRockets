@@ -1,9 +1,11 @@
+use std::cell::RefCell;
+
 use crate::constants::*;
+use crate::drawer::TexturePool;
 use crate::obstacle::Obstacle;
 use crate::rocket::Rocket;
-use crate::sprite::TexturedSprite;
+use crate::sprite::Sprite;
 use crate::target::Target;
-use crate::texture_pool::TexturePool;
 
 use rand::seq::SliceRandom;
 

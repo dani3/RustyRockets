@@ -5,7 +5,7 @@ use vector2d::Vector2D;
 
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
-use sdl2::render::{Canvas, TextureCreator};
+use sdl2::render::{Canvas, Texture};
 use sdl2::video::Window;
 
 const SIZE: i32 = 15;
@@ -15,6 +15,8 @@ const TARGET_ORIGIN_Y: i32 = 50;
 
 pub struct Target {
     position: Vector2D<i32>,
+    pub height: u32,
+    pub width: u32,
 }
 
 impl Target {
@@ -24,6 +26,8 @@ impl Target {
 
         Target {
             position: Vector2D::new(x, y),
+            height: SIZE as u32,
+            width: SIZE as u32,
         }
     }
 
@@ -33,14 +37,8 @@ impl Target {
 }
 
 impl Sprite for Target {
-    fn draw(&self, canvas: &mut Canvas<Window>) {
-        let texture_creator: TextureCreator<_> = canvas.texture_creator();
-
-        let mut texture = texture_creator
-            .create_texture_target(None, SIZE as u32, SIZE as u32)
-            .expect("Failed to create a texture");
-
-        let _ = canvas.with_texture_canvas(&mut texture, |texture_canvas| {
+    fn draw(&self, canvas: &mut Canvas<Window>, texture: &mut Texture) {
+        let _ = canvas.with_texture_canvas(texture, |texture_canvas| {
             texture_canvas.set_draw_color(Color::RGBA(255, 0, 0, 255));
             texture_canvas.clear();
         });

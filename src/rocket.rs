@@ -1,7 +1,7 @@
 use crate::constants::*;
 use crate::dna::DNA;
 use crate::obstacle::Obstacle;
-use crate::sprite::TexturedSprite;
+use crate::sprite::Sprite;
 use crate::target::Target;
 
 use vector2d::Vector2D;
@@ -151,7 +151,7 @@ impl Rocket {
     }
 }
 
-impl TexturedSprite for Rocket {
+impl Sprite for Rocket {
     fn draw(&self, canvas: &mut Canvas<Window>, texture: &mut Texture) {
         let _ = canvas.with_texture_canvas(texture, |texture_canvas| {
             texture_canvas.set_draw_color(Color::RGBA(200, 200, 200, 255));

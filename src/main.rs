@@ -1,49 +1,32 @@
+use std::cell::RefCell;
 use std::{thread, time};
+
+use indicatif::{ProgressBar, ProgressStyle};
 
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::rect::Point;
 
-use indicatif::{ProgressBar, ProgressStyle};
-
 mod constants;
 mod dna;
+mod drawer;
 mod obstacle;
 mod population;
 mod rocket;
 mod sprite;
 mod target;
-mod texture_pool;
 
 use constants::*;
+use drawer::{Drawer, TexturePool};
 use obstacle::Obstacle;
 use population::Population;
-use sprite::Sprite;
 use target::Target;
-use texture_pool::{TextureManager, TexturePool};
 
 fn main() {
     let sdl_context = sdl2::init().unwrap();
-    let video_subsystem = sdl_context.video().unwrap();
-
-    let window = video_subsystem
-        .window("Rusty Rockets", SCREEN_WIDTH as u32, SCREEN_HEIGHT as u32)
-        .position_centered()
-        .opengl()
-        .build()
-        .unwrap();
-
-    let mut canvas = window
-        .into_canvas()
-        .target_texture()
-        .present_vsync()
-        .build()
-        .unwrap();
-
+    let drawer = RefCell::new(Drawer::new(&sdl_context));
     let mut event_pump = sdl_context.event_pump().unwrap();
-
-    canvas.clear();
 
     // Create progress bar
     let mut pb = ProgressBar::new(LIFESPAN as u64);
@@ -62,11 +45,12 @@ fn main() {
         25,
     );
 
-    // Create a texture pool
-    let texture_manager = TextureManager::new(&canvas);
-    let mut texture_pool = TexturePool::new(&texture_manager.texture_creator);
-
     println!();
+
+    let txc = &drawer.borrow().texture_creator;
+    let mut txp = TexturePool::new();
+    txp.add(&txc, target.height, target.width);
+    txp.add(&txc, target.height, target.width);
 
     let mut count = 0;
     'running: loop {
@@ -81,12 +65,12 @@ fn main() {
             }
         }
 
-        canvas.set_draw_color(Color::RGB(40, 44, 52));
-        canvas.clear();
+        drawer.borrow().set_color(Color::RGB(40, 44, 52));
 
         // Draw the target
-        obstacle.draw(&mut canvas);
-        target.draw(&mut canvas);
+        drawer.borrow().draw_sprite(&obstacle, &mut txp.textures[0]);
+
+        drawer.borrow().draw_sprite(&target, &mut txp.textures[1]);
 
         if count == LIFESPAN {
             count = 0;
@@ -103,12 +87,12 @@ fn main() {
             pb.inc(1);
 
             // Update and draw the population
-            population.run(&mut canvas, &target, &obstacle, &mut texture_pool);
+            //population.run(&mut canvas, &target, &obstacle, &mut texture_pool);
 
             count += 1;
         }
 
-        canvas.present();
+        drawer.borrow().update();
 
         thread::sleep(time::Duration::from_millis(5));
     }

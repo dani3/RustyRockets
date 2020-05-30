@@ -1,6 +1,6 @@
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
-use sdl2::render::Canvas;
+use sdl2::render::{Canvas, Texture};
 use sdl2::video::Window;
 
 use vector2d::Vector2D;
@@ -8,8 +8,8 @@ use vector2d::Vector2D;
 use crate::sprite::Sprite;
 
 pub struct Obstacle {
-    width: u32,
-    height: u32,
+    pub width: u32,
+    pub height: u32,
     pub position: Vector2D<f64>,
 }
 
@@ -41,14 +41,25 @@ impl Obstacle {
 }
 
 impl Sprite for Obstacle {
-    fn draw(&self, canvas: &mut Canvas<Window>) {
-        canvas.set_draw_color(Color::RGB(200, 200, 200));
+    fn draw(&self, canvas: &mut Canvas<Window>, texture: &mut Texture) {
+        let _ = canvas.with_texture_canvas(texture, |texture_canvas| {
+            texture_canvas.set_draw_color(Color::RGBA(200, 200, 200, 255));
+            texture_canvas.clear();
+        });
 
-        let _ = canvas.fill_rect(Rect::new(
-            self.position.x as i32,
-            self.position.y as i32,
-            self.width,
-            self.height,
-        ));
+        let _ = canvas.copy_ex(
+            &texture,
+            None,
+            Rect::new(
+                self.position.x as i32,
+                self.position.y as i32,
+                self.width,
+                self.height,
+            ),
+            0.0,
+            Point::new(self.width as i32 / 2, self.height as i32 / 2),
+            false,
+            false,
+        );
     }
 }
