@@ -14,6 +14,7 @@ const TARGET_ORIGIN_X: i32 = SCREEN_WIDTH as i32 / 2;
 const TARGET_ORIGIN_Y: i32 = 50;
 
 pub struct Target {
+    pub name: String,
     position: Vector2D<i32>,
     pub height: u32,
     pub width: u32,
@@ -26,6 +27,7 @@ impl Target {
 
         Target {
             position: Vector2D::new(x, y),
+            name: String::from("Target"),
             height: SIZE as u32,
             width: SIZE as u32,
         }

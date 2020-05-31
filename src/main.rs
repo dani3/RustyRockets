@@ -20,7 +20,7 @@ mod target;
 use constants::*;
 use drawer::{Drawer, TexturePool};
 use obstacle::Obstacle;
-use population::{Population, POPULATION_SIZE};
+use population::Population;
 use target::Target;
 
 fn main() {
@@ -35,7 +35,7 @@ fn main() {
         .progress_chars("=>-"));
 
     // Create the first population
-    let mut population = Population::new();
+    let mut population = Population::new(POPULATION_SIZE);
     // Create the target
     let target = Target::new();
     // Create an obstacle
@@ -49,10 +49,11 @@ fn main() {
 
     let txc = &drawer.borrow().texture_creator;
     let mut txp = TexturePool::new();
-    txp.add(&txc, target.height, target.width);
-    txp.add(&txc, target.height, target.width);
-    for _ in 0..POPULATION_SIZE {
-        txp.add(&txc, 15, 3);
+    txp.add(target.name.clone(), &txc, target.height, target.width);
+    txp.add(obstacle.name.clone(), &txc, obstacle.height, obstacle.width);
+
+    for rocket in &population.rockets {
+        txp.add(rocket.name.clone(), &txc, rocket.height, rocket.width);
     }
 
     let mut count = 0;
@@ -71,9 +72,14 @@ fn main() {
         drawer.borrow().set_color(Color::RGB(40, 44, 52));
 
         // Draw the target
-        drawer.borrow().draw_sprite(&obstacle, &mut txp.textures[0]);
+        let mut x = txp.textures.get_mut(&obstacle.name);
+        if let Some(ref mut texture) = x {
+            drawer.borrow().draw_sprite(&obstacle, texture);
+        }
 
-        drawer.borrow().draw_sprite(&target, &mut txp.textures[1]);
+        if let Some(ref mut texture) = txp.textures.get_mut(&target.name) {
+            drawer.borrow().draw_sprite(&target, texture);
+        }
 
         if count == LIFESPAN {
             count = 0;
@@ -89,11 +95,12 @@ fn main() {
         } else {
             pb.inc(1);
 
-            for (i, rocket) in population.rockets.iter_mut().enumerate() {
+            for rocket in population.rockets.iter_mut() {
                 rocket.update(&target, &obstacle);
-                drawer
-                    .borrow()
-                    .draw_sprite(rocket, &mut txp.textures[i + 2]);
+
+                if let Some(ref mut texture) = txp.textures.get_mut(&rocket.name) {
+                    drawer.borrow().draw_sprite(rocket, texture);
+                }
             }
 
             count += 1;

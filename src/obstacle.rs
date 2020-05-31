@@ -8,6 +8,7 @@ use vector2d::Vector2D;
 use crate::sprite::Sprite;
 
 pub struct Obstacle {
+    pub name: String,
     pub width: u32,
     pub height: u32,
     pub position: Vector2D<f64>,
@@ -19,6 +20,7 @@ impl Obstacle {
         let y = origin.y - (height as i32 / 2);
 
         Obstacle {
+            name: String::from("Obstacle"),
             position: Vector2D::new(x as f64, y as f64),
             width,
             height,

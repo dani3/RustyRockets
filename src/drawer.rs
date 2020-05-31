@@ -1,4 +1,5 @@
 use std::cell::RefCell;
+use std::collections::HashMap;
 
 use sdl2::pixels::Color;
 use sdl2::render::{Canvas, Texture, TextureCreator};
@@ -56,19 +57,21 @@ impl Drawer {
 }
 
 pub struct TexturePool<'s> {
-    pub textures: Vec<Texture<'s>>,
+    pub textures: HashMap<String, Texture<'s>>,
 }
 
 impl<'s> TexturePool<'s> {
     pub fn new() -> Self {
-        TexturePool { textures: vec![] }
+        TexturePool {
+            textures: HashMap::new(),
+        }
     }
 
-    pub fn add(&mut self, txc: &'s TextureCreator<WindowContext>, w: u32, h: u32) {
+    pub fn add(&mut self, id: String, txc: &'s TextureCreator<WindowContext>, w: u32, h: u32) {
         let texture = txc
             .create_texture_target(None, w, h)
             .expect("Failed to create a texture");
 
-        self.textures.push(texture)
+        self.textures.insert(id, texture);
     }
 }

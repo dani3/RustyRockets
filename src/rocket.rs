@@ -14,9 +14,6 @@ use sdl2::rect::{Point, Rect};
 use sdl2::render::{Canvas, Texture};
 use sdl2::video::Window;
 
-const HEIGHT: u32 = 15;
-const WIDTH: u32 = 3;
-
 const MAX_REWARD: f64 = 20.0;
 const MIN_REWARD: f64 = 10.0;
 
@@ -36,23 +33,27 @@ pub struct Rocket {
     count: usize,
     time_reached: usize,
     crashed: bool,
+    pub height: u32,
+    pub width: u32,
+    pub name: String,
     pub reached: bool,
     pub dna: DNA,
     pub fitness: f64,
 }
 
 impl Rocket {
-    pub fn new(origin: Point, dna_optional: Option<DNA>) -> Self {
-        let x = origin.x - WIDTH as i32 / 2;
-        let y = origin.y - HEIGHT as i32;
-
-        let dna = dna_optional.unwrap_or(DNA::new(None));
+    pub fn new(name: String, origin: Point, h: u32, w: u32, dna: Option<DNA>) -> Self {
+        let x = origin.x - w as i32 / 2;
+        let y = origin.y - h as i32;
 
         Rocket {
             position: Vector2D::new(x as f64, y as f64),
             velocity: Vector2D::new(0.0, 0.0),
             acceleration: Vector2D::new(0.0, 0.0),
-            dna,
+            dna: dna.unwrap_or(DNA::new(None)),
+            height: h,
+            width: w,
+            name,
             crashed: false,
             reached: false,
             time_reached: 0,
@@ -84,7 +85,7 @@ impl Rocket {
             } else if (self.position.x > SCREEN_WIDTH as f64) || (self.position.x < 0.0) {
                 self.crashed = true;
             } else if ((self.position.y as i32) < 0)
-                || ((self.position.y as u32) + HEIGHT > SCREEN_HEIGHT as u32)
+                || ((self.position.y as u32) + self.height > SCREEN_HEIGHT as u32)
             {
                 self.crashed = true;
             } else {
@@ -171,11 +172,11 @@ impl Sprite for Rocket {
             Rect::new(
                 self.position.x as i32,
                 self.position.y as i32,
-                WIDTH,
-                HEIGHT,
+                self.width,
+                self.height,
             ),
             angle,
-            Point::new(WIDTH as i32 / 2, HEIGHT as i32 / 2),
+            Point::new(self.width as i32 / 2, self.height as i32 / 2),
             false,
             false,
         );

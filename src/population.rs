@@ -7,8 +7,6 @@ use rand::seq::SliceRandom;
 
 use sdl2::rect::Point;
 
-pub const POPULATION_SIZE: usize = 300;
-
 const POPULATION_ORIGIN_X: i32 = SCREEN_WIDTH as i32 / 2;
 const POPULATION_ORIGIN_Y: i32 = SCREEN_HEIGHT as i32;
 
@@ -19,11 +17,16 @@ pub struct Population {
 }
 
 impl Population {
-    pub fn new() -> Self {
+    pub fn new(capacity: usize) -> Self {
         let mut rockets = Vec::new();
-        for _ in 0..POPULATION_SIZE {
+        for i in 0..capacity {
+            let mut name = String::from("Rocket#");
+            name.push_str(&i.to_string());
             rockets.push(Rocket::new(
+                name,
                 Point::new(POPULATION_ORIGIN_X, POPULATION_ORIGIN_Y),
+                ROCKET_HEIGHT,
+                ROCKET_WIDTH,
                 None,
             ));
         }
@@ -97,8 +100,14 @@ impl Population {
             // Apply some random low-probability mutation
             child.mutate();
 
+            let mut name = String::from("Rocket#");
+            name.push_str(&i.to_string());
+
             self.rockets[i] = Rocket::new(
+                name,
                 Point::new(POPULATION_ORIGIN_X, POPULATION_ORIGIN_Y),
+                ROCKET_HEIGHT,
+                ROCKET_WIDTH,
                 Some(child),
             );
         }
