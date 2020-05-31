@@ -1,22 +1,19 @@
-use crate::constants::*;
-
-use vector2d::Vector2D;
-
 use rand::Rng;
+use vector2d::Vector2D;
 
 pub struct DNA {
     genes: Vec<Vector2D<f64>>,
 }
 
 impl DNA {
-    pub fn new(optional_genes: Option<Vec<Vector2D<f64>>>) -> Self {
+    pub fn new(capacity: usize, optional_genes: Option<Vec<Vector2D<f64>>>) -> Self {
         if let Some(genes) = optional_genes {
             return DNA { genes };
         } else {
             let mut genes = Vec::new();
             let mut rng = rand::thread_rng();
 
-            for _ in 0..LIFESPAN {
+            for _ in 0..capacity {
                 let vx = rng.gen_range(-0.2, 0.2) as f64;
                 let vy = rng.gen_range(-0.2, 0.2) as f64;
 
@@ -36,8 +33,8 @@ impl DNA {
         let mut rng = rand::thread_rng();
 
         let mut new_genes: Vec<Vector2D<f64>> = Vec::new();
-        for i in 0..LIFESPAN {
-            let middle = rng.gen_range(0, LIFESPAN);
+        for i in 0..self.genes.len() {
+            let middle = rng.gen_range(0, self.genes.len());
             if i > middle {
                 new_genes.push(self.genes[i as usize]);
             } else {
@@ -45,14 +42,14 @@ impl DNA {
             }
         }
 
-        DNA::new(Some(new_genes))
+        DNA::new(self.genes.len(), Some(new_genes))
     }
 
     /// Generates some random mutation in a specific gene
     pub fn mutate(&mut self) {
         let mut rng = rand::thread_rng();
 
-        for i in 0..LIFESPAN {
+        for i in 0..self.genes.len() {
             if rng.gen_range(0.0, 1.0) < 0.01 {
                 let vx = rng.gen_range(-0.2, 0.2) as f64;
                 let vy = rng.gen_range(-0.2, 0.2) as f64;

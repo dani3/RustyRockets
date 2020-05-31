@@ -50,7 +50,7 @@ impl Rocket {
             position: Vector2D::new(x as f64, y as f64),
             velocity: Vector2D::new(0.0, 0.0),
             acceleration: Vector2D::new(0.0, 0.0),
-            dna: dna.unwrap_or(DNA::new(None)),
+            dna: dna.unwrap_or(DNA::new(LIFESPAN, None)),
             height: h,
             width: w,
             name,
