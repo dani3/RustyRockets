@@ -7,24 +7,25 @@ use rand::seq::SliceRandom;
 
 use sdl2::rect::Point;
 
-const POPULATION_ORIGIN_X: i32 = SCREEN_WIDTH as i32 / 2;
-const POPULATION_ORIGIN_Y: i32 = SCREEN_HEIGHT as i32;
+pub const ROCKET_HEIGHT: u32 = 15;
+pub const ROCKET_WIDTH: u32 = 3;
 
 pub struct Population {
     pub rockets: Vec<Rocket>,
+    origin: Point,
     mating_pool: Vec<usize>,
     generation: u32,
 }
 
 impl Population {
-    pub fn new(capacity: usize) -> Self {
+    pub fn new(capacity: usize, x: i32, y: i32) -> Self {
         let mut rockets = Vec::new();
         for i in 0..capacity {
             let mut name = String::from("Rocket#");
             name.push_str(&i.to_string());
             rockets.push(Rocket::new(
                 name,
-                Point::new(POPULATION_ORIGIN_X, POPULATION_ORIGIN_Y),
+                Point::new(x, y),
                 ROCKET_HEIGHT,
                 ROCKET_WIDTH,
                 None,
@@ -33,6 +34,7 @@ impl Population {
 
         Population {
             rockets,
+            origin: Point::new(x, y),
             mating_pool: Vec::new(),
             generation: 0,
         }
@@ -105,7 +107,7 @@ impl Population {
 
             self.rockets[i] = Rocket::new(
                 name,
-                Point::new(POPULATION_ORIGIN_X, POPULATION_ORIGIN_Y),
+                Point::new(self.origin.x(), self.origin.y()),
                 ROCKET_HEIGHT,
                 ROCKET_WIDTH,
                 Some(child),

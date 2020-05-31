@@ -5,5 +5,5 @@ pub const SCREEN_HEIGHT: isize = 800;
 
 pub const POPULATION_SIZE: usize = 300;
 
-pub const ROCKET_HEIGHT: u32 = 15;
-pub const ROCKET_WIDTH: u32 = 3;
+pub const POPULATION_ORIGIN_X: i32 = SCREEN_WIDTH as i32 / 2;
+pub const POPULATION_ORIGIN_Y: i32 = SCREEN_HEIGHT as i32;

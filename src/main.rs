@@ -35,7 +35,7 @@ fn main() {
         .progress_chars("=>-"));
 
     // Create the first population
-    let mut population = Population::new(POPULATION_SIZE);
+    let mut population = Population::new(POPULATION_SIZE, POPULATION_ORIGIN_X, POPULATION_ORIGIN_Y);
     // Create the target
     let target = Target::new();
     // Create an obstacle
