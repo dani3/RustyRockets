@@ -1,18 +1,15 @@
 use crate::constants::*;
-use crate::dna::DNA;
+use crate::dna::Dna;
 use crate::obstacle::Obstacle;
 use crate::sprite::Sprite;
 use crate::target::Target;
 
-use vector2d::Vector2D;
-
-use std::f64;
-use std::f64::consts::PI;
-
-use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
 use sdl2::render::{Canvas, Texture};
 use sdl2::video::Window;
+use std::f64;
+use std::f64::consts::PI;
+use vector2d::Vector2D;
 
 const MAX_REWARD: f64 = 20.0;
 const MIN_REWARD: f64 = 10.0;
@@ -37,12 +34,12 @@ pub struct Rocket {
     pub width: u32,
     pub name: String,
     pub reached: bool,
-    pub dna: DNA,
+    pub dna: Dna,
     pub fitness: f64,
 }
 
 impl Rocket {
-    pub fn new(name: String, origin: Point, h: u32, w: u32, dna: Option<DNA>) -> Self {
+    pub fn new(name: String, origin: Point, h: u32, w: u32, dna: Option<Dna>) -> Self {
         let x = origin.x - w as i32 / 2;
         let y = origin.y - h as i32;
 
@@ -50,7 +47,7 @@ impl Rocket {
             position: Vector2D::new(x as f64, y as f64),
             velocity: Vector2D::new(0.0, 0.0),
             acceleration: Vector2D::new(0.0, 0.0),
-            dna: dna.unwrap_or(DNA::new(LIFESPAN, None)),
+            dna: dna.unwrap_or(Dna::new(LIFESPAN, None)),
             height: h,
             width: w,
             name,
@@ -89,14 +86,13 @@ impl Rocket {
             {
                 self.crashed = true;
             } else {
-                self.apply_force(self.dna.get_genes()[self.count]);
+                self.apply_force(self.dna.genes[self.count]);
                 self.count += 1;
 
                 // Update the velocity based on the acceleration
                 self.velocity += self.acceleration;
                 // Update the position based on the velocity
                 self.position += self.velocity;
-
                 // Clear the acceleration
                 self.acceleration = Vector2D::new(0.0, 0.0);
             }
@@ -154,11 +150,6 @@ impl Rocket {
 
 impl Sprite for Rocket {
     fn draw(&self, canvas: &mut Canvas<Window>, texture: &mut Texture) {
-        let _ = canvas.with_texture_canvas(texture, |texture_canvas| {
-            texture_canvas.set_draw_color(Color::RGBA(200, 200, 200, 255));
-            texture_canvas.clear();
-        });
-
         let angle;
         if self.velocity.angle() == 0.0 {
             angle = 0.0;

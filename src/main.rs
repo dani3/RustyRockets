@@ -1,12 +1,11 @@
-use std::cell::RefCell;
-use std::{thread, time};
-
 use indicatif::{ProgressBar, ProgressStyle};
-
 use sdl2::event::Event;
+use sdl2::image::InitFlag;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::rect::Point;
+use std::cell::RefCell;
+use std::path::Path;
 
 mod constants;
 mod dna;
@@ -25,6 +24,7 @@ use target::Target;
 
 fn main() {
     let sdl_context = sdl2::init().unwrap();
+    sdl2::image::init(InitFlag::PNG | InitFlag::JPG).unwrap();
     let drawer = RefCell::new(Drawer::new(&sdl_context));
     let mut event_pump = sdl_context.event_pump().unwrap();
 
@@ -49,11 +49,23 @@ fn main() {
 
     let txc = &drawer.borrow().texture_creator;
     let mut txp = TexturePool::new();
-    txp.add(target.name.clone(), &txc, target.height, target.width);
-    txp.add(obstacle.name.clone(), &txc, obstacle.height, obstacle.width);
+    txp.add(target.name.clone(), &txc, target.height, target.width, None);
+    txp.add(
+        obstacle.name.clone(),
+        &txc,
+        obstacle.height,
+        obstacle.width,
+        None,
+    );
 
     for rocket in &population.rockets {
-        txp.add(rocket.name.clone(), &txc, rocket.height, rocket.width);
+        txp.add(
+            rocket.name.clone(),
+            &txc,
+            rocket.height,
+            rocket.width,
+            Some(Path::new("./src/res/textures/rocket.png")),
+        );
     }
 
     let mut count = 0;
@@ -69,7 +81,7 @@ fn main() {
             }
         }
 
-        drawer.borrow().set_color(Color::RGB(40, 44, 52));
+        drawer.borrow().set_color(Color::RGBA(40, 44, 52, 0));
 
         // Draw the target
         let mut x = txp.textures.get_mut(&obstacle.name);
@@ -107,7 +119,5 @@ fn main() {
         }
 
         drawer.borrow().update();
-
-        thread::sleep(time::Duration::from_millis(5));
     }
 }

@@ -1,14 +1,14 @@
 use rand::Rng;
 use vector2d::Vector2D;
 
-pub struct DNA {
-    genes: Vec<Vector2D<f64>>,
+pub struct Dna {
+    pub genes: Vec<Vector2D<f64>>,
 }
 
-impl DNA {
+impl Dna {
     pub fn new(capacity: usize, optional_genes: Option<Vec<Vector2D<f64>>>) -> Self {
         if let Some(genes) = optional_genes {
-            return DNA { genes };
+            return Dna { genes };
         } else {
             let mut genes = Vec::new();
             let mut rng = rand::thread_rng();
@@ -20,29 +20,25 @@ impl DNA {
                 genes.push(Vector2D::new(vx, vy));
             }
 
-            DNA { genes }
+            Dna { genes }
         }
     }
 
-    pub fn get_genes(&self) -> &Vec<Vector2D<f64>> {
-        &self.genes
-    }
-
-    /// Crosses over two different DNAs producing a new DNA
-    pub fn crossover(&self, partner_dna: &DNA) -> DNA {
+    /// Crosses over two different DNAs producing a new Dna
+    pub fn crossover(&self, partner_dna: &Dna) -> Dna {
         let mut rng = rand::thread_rng();
 
         let mut new_genes: Vec<Vector2D<f64>> = Vec::new();
         for i in 0..self.genes.len() {
             let middle = rng.gen_range(0, self.genes.len());
             if i > middle {
-                new_genes.push(self.genes[i as usize]);
+                new_genes.push(self.genes[i]);
             } else {
-                new_genes.push(partner_dna.genes[i as usize]);
+                new_genes.push(partner_dna.genes[i]);
             }
         }
 
-        DNA::new(self.genes.len(), Some(new_genes))
+        Dna::new(self.genes.len(), Some(new_genes))
     }
 
     /// Generates some random mutation in a specific gene
@@ -54,7 +50,7 @@ impl DNA {
                 let vx = rng.gen_range(-0.2, 0.2) as f64;
                 let vy = rng.gen_range(-0.2, 0.2) as f64;
 
-                self.genes[i as usize] = Vector2D::new(vx, vy);
+                self.genes[i] = Vector2D::new(vx, vy);
             }
         }
     }

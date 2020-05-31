@@ -1,10 +1,11 @@
-use std::cell::RefCell;
-use std::collections::HashMap;
-
+use sdl2::image::LoadTexture;
 use sdl2::pixels::Color;
-use sdl2::render::{Canvas, Texture, TextureCreator};
+use sdl2::render::{BlendMode, Canvas, Texture, TextureCreator};
 use sdl2::video::{Window, WindowContext};
 use sdl2::Sdl;
+use std::cell::RefCell;
+use std::collections::HashMap;
+use std::path::Path;
 
 use crate::constants::*;
 use crate::sprite::Sprite;
@@ -24,12 +25,14 @@ impl Drawer {
             .build()
             .unwrap();
 
-        let canvas = window
+        let mut canvas = window
             .into_canvas()
             .target_texture()
             .present_vsync()
             .build()
             .unwrap();
+
+        canvas.set_blend_mode(BlendMode::Blend);
 
         let texture_creator: TextureCreator<_> = canvas.texture_creator();
 
@@ -67,10 +70,24 @@ impl<'s> TexturePool<'s> {
         }
     }
 
-    pub fn add(&mut self, id: String, txc: &'s TextureCreator<WindowContext>, w: u32, h: u32) {
-        let texture = txc
-            .create_texture_target(None, w, h)
-            .expect("Failed to create a texture");
+    pub fn add(
+        &mut self,
+        id: String,
+        txc: &'s TextureCreator<WindowContext>,
+        w: u32,
+        h: u32,
+        path: Option<&Path>,
+    ) {
+        let texture;
+        if let Some(image) = path {
+            texture = txc
+                .load_texture(image)
+                .expect("Failed to create a texture with the image");
+        } else {
+            texture = txc
+                .create_texture_target(None, w, h)
+                .expect("Failed to create a texture");
+        }
 
         self.textures.insert(id, texture);
     }

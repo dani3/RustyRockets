@@ -4,11 +4,10 @@ use crate::rocket::Rocket;
 use crate::target::Target;
 
 use rand::seq::SliceRandom;
-
 use sdl2::rect::Point;
 
-pub const ROCKET_HEIGHT: u32 = 15;
-pub const ROCKET_WIDTH: u32 = 3;
+pub const ROCKET_HEIGHT: u32 = 20;
+pub const ROCKET_WIDTH: u32 = 15;
 
 pub struct Population {
     pub rockets: Vec<Rocket>,
@@ -93,7 +92,7 @@ impl Population {
             let a = self.mating_pool.choose(&mut rand::thread_rng()).unwrap();
             let b = self.mating_pool.choose(&mut rand::thread_rng()).unwrap();
 
-            // Pick each one's DNA
+            // Pick each one's Dna
             let parent_a = &self.rockets[*a].dna;
             let parent_b = &self.rockets[*b].dna;
 

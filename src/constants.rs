@@ -1,7 +1,7 @@
 pub const LIFESPAN: usize = 500;
 
-pub const SCREEN_WIDTH: isize = 1200;
-pub const SCREEN_HEIGHT: isize = 800;
+pub const SCREEN_WIDTH: isize = 1920;
+pub const SCREEN_HEIGHT: isize = 1080;
 
 pub const POPULATION_SIZE: usize = 300;
 
