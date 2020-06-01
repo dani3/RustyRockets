@@ -12,9 +12,9 @@ use std::f64::consts::PI;
 use vector2d::Vector2D;
 
 const MAX_REWARD: f64 = 20.0;
-const MIN_REWARD: f64 = 10.0;
+const MIN_REWARD: f64 = 15.0;
 
-const OBSTACLE_PASSED_REWARD: f64 = 2.0;
+const OBSTACLE_PASSED_REWARD: f64 = 3.0;
 const OBSTACLE_NOT_PASSED_PENALTY: f64 = 0.25;
 
 const CRASH_PENALTY: f64 = 0.10;
@@ -142,7 +142,7 @@ impl Rocket {
             // Reward if they went passed the obstacle
             self.fitness *= OBSTACLE_PASSED_REWARD;
         } else if self.position.y >= obstacle.position.y {
-            // Penalty if the did not go passed the obstacle
+            // Penalty if they did not go passed the obstacle
             self.fitness *= OBSTACLE_NOT_PASSED_PENALTY;
         }
     }

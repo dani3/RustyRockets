@@ -2,11 +2,11 @@ use indicatif::{ProgressBar, ProgressStyle};
 use sdl2::event::Event;
 use sdl2::image::InitFlag;
 use sdl2::keyboard::Keycode;
-use sdl2::pixels::Color;
 use sdl2::rect::Point;
 use std::cell::RefCell;
 use std::path::Path;
 
+mod background;
 mod constants;
 mod dna;
 mod drawer;
@@ -16,6 +16,7 @@ mod rocket;
 mod sprite;
 mod target;
 
+use background::Background;
 use constants::*;
 use drawer::{Drawer, TexturePool};
 use obstacle::Obstacle;
@@ -33,23 +34,42 @@ fn main() {
     pb.set_style(ProgressStyle::default_bar()
         .template("{spinner:.green} [{elapsed_precise}] {bar:60.cyan/blue} {pos:>7}/{len:7} {msg} ({eta})")
         .progress_chars("=>-"));
+    println!();
 
     // Create the first population
     let mut population = Population::new(POPULATION_SIZE, POPULATION_ORIGIN_X, POPULATION_ORIGIN_Y);
     // Create the target
-    let target = Target::new();
+    let target = Target::new(
+        Point::new(TARGET_ORIGIN_X, TARGET_ORIGIN_Y),
+        TARGET_WIDTH,
+        TARGET_HEIGHT,
+    );
     // Create an obstacle
     let obstacle = Obstacle::new(
         Point::new(SCREEN_WIDTH as i32 / 2, SCREEN_HEIGHT as i32 / 2),
         SCREEN_WIDTH as u32 - (SCREEN_WIDTH as u32 / 3),
-        25,
+        75,
     );
+    // Create the background
+    let background = Background::new(SCREEN_HEIGHT as u32, SCREEN_WIDTH as u32);
 
-    println!();
-
+    // Load the textures
     let txc = &drawer.borrow().texture_creator;
     let mut txp = TexturePool::new();
-    txp.add(target.name.clone(), &txc, target.height, target.width, None);
+    txp.add(
+        background.name.clone(),
+        &txc,
+        background.height,
+        background.width,
+        Some(Path::new("./src/res/textures/background.jpg")),
+    );
+    txp.add(
+        target.name.clone(),
+        &txc,
+        target.height,
+        target.width,
+        Some(Path::new("./src/res/textures/target.png")),
+    );
     txp.add(
         obstacle.name.clone(),
         &txc,
@@ -81,14 +101,17 @@ fn main() {
             }
         }
 
-        drawer.borrow().set_color(Color::RGBA(40, 44, 52, 0));
+        // Draw the background
+        if let Some(ref mut texture) = txp.textures.get_mut(&background.name) {
+            drawer.borrow().draw_sprite(&background, texture);
+        }
 
         // Draw the target
-        let mut x = txp.textures.get_mut(&obstacle.name);
-        if let Some(ref mut texture) = x {
+        if let Some(ref mut texture) = txp.textures.get_mut(&obstacle.name) {
             drawer.borrow().draw_sprite(&obstacle, texture);
         }
 
+        // Draw the obstacle
         if let Some(ref mut texture) = txp.textures.get_mut(&target.name) {
             drawer.borrow().draw_sprite(&target, texture);
         }

@@ -1,5 +1,4 @@
 use sdl2::image::LoadTexture;
-use sdl2::pixels::Color;
 use sdl2::render::{BlendMode, Canvas, Texture, TextureCreator};
 use sdl2::video::{Window, WindowContext};
 use sdl2::Sdl;
@@ -40,11 +39,6 @@ impl Drawer {
             canvas: RefCell::new(canvas),
             texture_creator,
         }
-    }
-
-    pub fn set_color(&self, color: Color) {
-        self.canvas.borrow_mut().set_draw_color(color);
-        self.canvas.borrow_mut().clear();
     }
 
     pub fn update(&self) {
